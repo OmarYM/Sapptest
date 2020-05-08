@@ -5,7 +5,7 @@ import 'userdata.dart';
 import 'dbhelper.dart';
 import 'periodInput.dart';
 import 'courseinput.dart';
-
+import 'package:infinity_page_view/infinity_page_view.dart';
 
 class MainPage extends StatefulWidget {
   MainPage({Key key}) : super(key: key);
@@ -17,11 +17,13 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   bool upDirection = true, flag = true;
   ScrollController _controller;
-  PageController page;
+  InfinityPageController page;
+  int today;
 
   @override
   void initState() {
-    page = PageController(initialPage: 0);
+    today = DateTime.now().weekday;
+    page = InfinityPageController(initialPage: 0);
 
     dbperiods = DBHelperPeriod();
     dbcourses = DBHelperCourse();
@@ -43,8 +45,10 @@ class _MainPageState extends State<MainPage> {
             _controller.position.userScrollDirection == ScrollDirection.forward;
 
         // makes sure we don't call setState too much, but only when it is needed
-        if (upDirection != flag) setState(() {});
-        flag = upDirection;
+        if (upDirection != flag) {
+        setState(() {flag = upDirection;});
+        }
+        
       });
 
     //print(periods.toString());
@@ -89,26 +93,22 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    int today = DateTime.now().weekday;
-
     return Scaffold(
       appBar: AppBar(title: Text('MainPage')),
-      body: PageView(controller: page, children: [
-        PeriodList(day: today,),
-        PeriodList(day: today+1,),
-        PeriodList(day: today+2,),
-        PeriodList(day: today+3,),
-        PeriodList(day: today+4,),
-        PeriodList(day: today+5,),
-        PeriodList(day: today+6,),
-      
-      ]),
+
+      body: InfinityPageView(
+          controller: page,
+          itemCount: 7,
+          itemBuilder: (context, index) {
+            return PeriodList(day: today + index);
+          }),
+
       floatingActionButton: upDirection
           ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('Add A Period'),
+                  ButtonSubtitle(title: 'Add A Period',),
                   Padding(padding: EdgeInsets.only(right: 10)),
                   FloatingActionButton(
                     heroTag: 'period',
@@ -127,7 +127,7 @@ class _MainPageState extends State<MainPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('Add A Course'),
+                  ButtonSubtitle(title: 'Add A Course',),
                   Padding(padding: EdgeInsets.only(right: 10)),
                   FloatingActionButton(
                     heroTag: 'course',
@@ -151,5 +151,25 @@ class _MainPageState extends State<MainPage> {
   void dispose() {
     page.dispose();
     super.dispose();
+  }
+}
+
+class ButtonSubtitle extends StatelessWidget {
+  final title;
+
+  const ButtonSubtitle({
+    Key key, this.title,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(decoration: BoxDecoration(border: Border.all(
+      color: Colors.black12
+    ),
+    borderRadius: BorderRadius.all(Radius.circular(5)),
+    color: Colors.black12,),  child: Padding(
+      padding: const EdgeInsets.all(3.0),
+      child: Text(title),
+    ));
   }
 }

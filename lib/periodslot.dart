@@ -50,23 +50,36 @@ class PeriodSlot extends StatelessWidget {
 class PeriodList extends StatelessWidget {
   final int day;
   const PeriodList({
-    Key key, this.day,
+    Key key,
+    this.day,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    
-        final List<Period> currentPeriods = allFromDay((day-1)%7);
+    final List<Period> currentPeriods = allFromDay((day - 1) % 7);
 
     return ListView.builder(
-            itemBuilder: (context, index) {
-              return index == 0 ? Time() :  currentPeriods.isEmpty ? EmptyMessage() : PeriodSlot(
-                period: currentPeriods[index-1],
-                index: index,
-              );
-            },
-            itemCount: currentPeriods.isEmpty ? 2 : currentPeriods.length + 1,
-          );
+      itemBuilder: (context, index) {
+        return index == 0
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Time(),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(getDayOfTheWeek((day - 1) % 7), style: TextStyle(fontSize: 30),),
+                  )
+                ],
+              )
+            : currentPeriods.isEmpty
+                ? EmptyMessage()
+                : PeriodSlot(
+                    period: currentPeriods[index - 1],
+                    index: index,
+                  );
+      },
+      itemCount: currentPeriods.isEmpty ? 2 : currentPeriods.length + 1,
+    );
   }
 }
 
@@ -78,13 +91,13 @@ class EmptyMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-            alignment: Alignment.topCenter,
-            child: Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Text(
-      'Seems Empty, Try Adding Some Periods!',
-    ),
-            ),
-          );
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          'Seems Empty, Try Adding Some Periods!',
+        ),
+      ),
+    );
   }
 }
