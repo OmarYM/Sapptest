@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Time extends StatefulWidget {
   Time({Key key}) : super(key: key);
@@ -16,8 +17,8 @@ class _TimeState extends State<Time> with TickerProviderStateMixin {
   @override
   void initState() {
     i = 0;
-    _timeString =
-        "${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}";
+
+    _timeString = DateFormat.jms().format(DateTime.now());
     timer = Timer.periodic(Duration(seconds: 1), (Timer t) => _getCurrentTime());
     i++;
     super.initState();
@@ -27,7 +28,7 @@ class _TimeState extends State<Time> with TickerProviderStateMixin {
     if(i>0){
     setState(() {
       _timeString =
-          "${DateTime.now().hour}:${DateTime.now().minute}:${DateTime.now().second}";
+          _timeString = DateFormat.jms().format(DateTime.now());
     });
     }
   }
