@@ -23,4 +23,9 @@ class Course {
     if (other.runtimeType != runtimeType) return false;
     return other is Course && other.title == title;
   }
+
+  @override
+  
+  int get hashCode => title.hashCode;
+
 }

@@ -1,7 +1,7 @@
 import 'package:Sapptest/dbhelper.dart';
 import 'package:Sapptest/period.dart';
 import 'course.dart';
-import 'package:flutter/material.dart';
+
 
 DBHelperPeriod dbperiods;
 DBHelperCourse dbcourses;
@@ -45,3 +45,31 @@ List<Period> allFromCourse(String title) {
 
   return result;
 }
+
+ String getDayOfTheWeek(int day) {
+    switch (day) {
+      case 0:
+        return 'Monday';
+
+      case 1:
+        return 'Tuesday';
+
+      case 2:
+        return 'Wednesday';
+
+      case 3:
+        return 'Thursday';
+
+      case 4:
+        return 'Friday';
+
+      case 5:
+        return 'Saturday';
+
+      case 6:
+        return 'Sunday';
+
+      default:
+        return 'Invalid -getDayOfTheWeek Method-';
+    }
+  }

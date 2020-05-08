@@ -1,13 +1,11 @@
-import 'package:Sapptest/course.dart';
 import 'package:Sapptest/periodslot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'userdata.dart';
 import 'dbhelper.dart';
-import 'period.dart';
 import 'periodInput.dart';
 import 'courseinput.dart';
-import 'time.dart';
+
 
 class MainPage extends StatefulWidget {
   MainPage({Key key}) : super(key: key);
@@ -151,7 +149,6 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     page.dispose();
     super.dispose();
   }

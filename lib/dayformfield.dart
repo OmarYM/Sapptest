@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'userdata.dart';
+
 int _groupValue;
 
 class DayFormField extends FormField<int> {
@@ -149,31 +151,5 @@ class _DayCheckBoxState extends State<DayCheckBox> {
     ]);
   }
 
-  String getDayOfTheWeek(int day) {
-    switch (day) {
-      case 0:
-        return 'Monday';
-
-      case 1:
-        return 'Tuesday';
-
-      case 2:
-        return 'Wednesday';
-
-      case 3:
-        return 'Thursday';
-
-      case 4:
-        return 'Friday';
-
-      case 5:
-        return 'Saturday';
-
-      case 6:
-        return 'Sunday';
-
-      default:
-        return 'Invalid -getDayOfTheWeek Method-';
-    }
-  }
+ 
 }
