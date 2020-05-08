@@ -82,7 +82,7 @@ class _PeriodInputState extends State<PeriodInput> {
                     items:
                         courses.map<DropdownMenuItem<Course>>((Course value) {
                       return DropdownMenuItem<Course>(
-                        value: value != null ? value : null, 
+                        value: value , 
                         child: Text(value.title),
                       );
                     }).toList(),
@@ -207,8 +207,6 @@ class _PeriodInputState extends State<PeriodInput> {
                         Navigator.pop(context);
                       } else {
                         setState(() {
-                          x = false;
-                          print('false');
                         });
                       }
                     },

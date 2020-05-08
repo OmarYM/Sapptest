@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 
-
-
-class Course{
-
+class Course {
   String title = 'empty';
   String courseCode = '';
   String description = '';
 
-  Course({@required this.title, this.description, this.courseCode} );
+  Course({@required this.title, this.description, this.courseCode});
 
   Course.fromMap(Map<String, dynamic> json)
       : description = json['description'],
@@ -21,4 +18,9 @@ class Course{
         'title': title,
       };
 
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    if (other.runtimeType != runtimeType) return false;
+    return other is Course && other.title == title;
+  }
 }

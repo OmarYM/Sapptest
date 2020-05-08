@@ -7,6 +7,7 @@ import 'dbhelper.dart';
 import 'period.dart';
 import 'periodInput.dart';
 import 'courseinput.dart';
+import 'time.dart';
 
 class MainPage extends StatefulWidget {
   MainPage({Key key}) : super(key: key);
@@ -18,9 +19,12 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   bool upDirection = true, flag = true;
   ScrollController _controller;
+  PageController page;
 
   @override
   void initState() {
+    page = PageController(initialPage: 0);
+
     dbperiods = DBHelperPeriod();
     dbcourses = DBHelperCourse();
 
@@ -87,9 +91,20 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    int today = DateTime.now().weekday;
+
     return Scaffold(
       appBar: AppBar(title: Text('MainPage')),
-      body: PeriodList(),
+      body: PageView(controller: page, children: [
+        PeriodList(day: today,),
+        PeriodList(day: today+1,),
+        PeriodList(day: today+2,),
+        PeriodList(day: today+3,),
+        PeriodList(day: today+4,),
+        PeriodList(day: today+5,),
+        PeriodList(day: today+6,),
+      
+      ]),
       floatingActionButton: upDirection
           ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [
               Row(
@@ -132,5 +147,12 @@ class _MainPageState extends State<MainPage> {
             ])
           : Container(),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    page.dispose();
+    super.dispose();
   }
 }

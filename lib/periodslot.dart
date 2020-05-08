@@ -1,6 +1,7 @@
 import 'package:Sapptest/userdata.dart';
 import 'package:flutter/material.dart';
 import 'period.dart';
+import 'time.dart';
 
 class PeriodSlot extends StatelessWidget {
   final int index;
@@ -47,32 +48,43 @@ class PeriodSlot extends StatelessWidget {
 }
 
 class PeriodList extends StatelessWidget {
+  final int day;
   const PeriodList({
+    Key key, this.day,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    
+        final List<Period> currentPeriods = allFromDay((day-1)%7);
+
+    return ListView.builder(
+            itemBuilder: (context, index) {
+              return index == 0 ? Time() :  currentPeriods.isEmpty ? EmptyMessage() : PeriodSlot(
+                period: currentPeriods[index-1],
+                index: index,
+              );
+            },
+            itemCount: currentPeriods.isEmpty ? 2 : currentPeriods.length + 1,
+          );
+  }
+}
+
+class EmptyMessage extends StatelessWidget {
+  const EmptyMessage({
     Key key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final List<Period> currentPeriods = allFromDay(DateTime.now().weekday - 1);
-
-    return currentPeriods.isEmpty
-        ? Container(
+    return Container(
             alignment: Alignment.topCenter,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                'Seems Empty, Try Adding Some Periods!',
-              ),
+    padding: const EdgeInsets.all(8.0),
+    child: Text(
+      'Seems Empty, Try Adding Some Periods!',
+    ),
             ),
-          )
-        : ListView.builder(
-            itemBuilder: (context, index) {
-              return PeriodSlot(
-                period: currentPeriods[index],
-                index: index,
-              );
-            },
-            itemCount: currentPeriods.length,
           );
   }
 }
