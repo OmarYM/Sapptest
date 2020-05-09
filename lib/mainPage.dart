@@ -1,6 +1,7 @@
 import 'package:Sapptest/periodslot.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'time.dart';
 import 'userdata.dart';
 import 'dbhelper.dart';
 import 'periodInput.dart';
@@ -96,12 +97,20 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       appBar: AppBar(title: Text('MainPage')),
 
-      body: InfinityPageView(
-          controller: page,
-          itemCount: 7,
-          itemBuilder: (context, index) {
-            return PeriodList(day: today + index);
-          }),
+      body: Column(
+        children: [
+          Time(),
+          
+          Expanded(
+                      child: InfinityPageView(
+                controller: page,
+                itemCount: 7,
+                itemBuilder: (context, index) {
+                  return PeriodList(day: today + index);
+                }),
+          ),
+        ],
+      ),
 
       floatingActionButton: upDirection
           ? Column(mainAxisAlignment: MainAxisAlignment.end, children: [

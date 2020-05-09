@@ -61,16 +61,14 @@ class PeriodList extends StatelessWidget {
     return ListView.builder(
       itemBuilder: (context, index) {
         return index == 0
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Time(),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(getDayOfTheWeek((day - 1) % 7), style: TextStyle(fontSize: 30),),
+            ? 
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(getDayOfTheWeek((day - 1) % 7), style: TextStyle(fontSize: 30),),
+                    ),
                   )
-                ],
-              )
+               
             : currentPeriods.isEmpty
                 ? EmptyMessage()
                 : PeriodSlot(
