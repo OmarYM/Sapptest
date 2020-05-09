@@ -1,7 +1,9 @@
+import 'package:Sapptest/mainPage.dart';
 import 'package:Sapptest/userdata.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'period.dart';
-import 'time.dart';
+
 
 class PeriodSlot extends StatelessWidget {
   final int index;
@@ -47,7 +49,7 @@ class PeriodSlot extends StatelessWidget {
   }
 }
 
-class PeriodList extends StatelessWidget {
+class PeriodList extends StatefulWidget {
   final int day;
   const PeriodList({
     Key key,
@@ -55,17 +57,42 @@ class PeriodList extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _PeriodListState createState() => _PeriodListState();
+}
+
+class _PeriodListState extends State<PeriodList> {
+  ScrollController _controller;
+
+
+  @override
+  void initState() {
+    
+    _controller = ScrollController()
+      ..addListener(() {
+        upDirection =
+            _controller.position.userScrollDirection == ScrollDirection.forward;
+
+        // makes sure we don't call setState too much, but only when it is needed
+        if (upDirection != flag) {
+            flag = upDirection;
+            scrollCheck.value = upDirection;
+        }
+      });
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
-    final List<Period> currentPeriods = allFromDay((day - 1) % 7);
+    final List<Period> currentPeriods = allFromDay((widget.day - 1) % 7);
 
     return ListView.builder(
+      controller: _controller,
       itemBuilder: (context, index) {
         return index == 0
             ? 
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: Text(getDayOfTheWeek((day - 1) % 7), style: TextStyle(fontSize: 30),),
+                      child: Text(getDayOfTheWeek((widget.day - 1) % 7), style: TextStyle(fontSize: 30),),
                     ),
                   )
                

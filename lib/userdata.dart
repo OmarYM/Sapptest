@@ -46,6 +46,9 @@ List<Period> allFromCourse(String title) {
   return result;
 }
 
+bool upDirection = true, flag = true;
+
+
  String getDayOfTheWeek(int day) {
     switch (day) {
       case 0:
