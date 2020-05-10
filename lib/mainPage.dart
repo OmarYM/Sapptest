@@ -1,4 +1,5 @@
 import 'package:Sapptest/periodslot.dart';
+import 'package:Sapptest/settingsPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'time.dart';
@@ -23,14 +24,17 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
+    upDirection = true;
+    flag = true;
+
     today = DateTime.now().weekday;
     page = InfinityPageController(initialPage: 0);
 
     dbperiods = DBHelperPeriod();
     dbcourses = DBHelperCourse();
 
-    dbperiods.deleteTable();
-    dbcourses.deleteTable();
+    //dbperiods.deleteTable();
+    //dbcourses.deleteTable();
 
     //dbcourses.createTable();
     //dbperiods.createTable();
@@ -46,21 +50,21 @@ class _MainPageState extends State<MainPage> {
   }
 
   refreshLists() {
-    setState(() {
-      dbperiods.getPeriods().then((value) {
-        if (value.isNotEmpty) {
-          setState(() {
-            periods = value;
-          });
-        }
-      });
-      dbcourses.getCourses().then((value) {
-        if (value.isNotEmpty) {
-          setState(() {
-            courses = value;
-          });
-        }
-      });
+    dbperiods.getPeriods().then((value) {
+      if (value != null) {
+        setState(() {
+          periods = value;
+          periods.sort();
+        });
+      }
+    });
+    dbcourses.getCourses().then((value) {
+      if (value != null) {
+        setState(() {
+          courses = value;
+          courses.sort((a, b) => a.title.compareTo(b.title));
+        });
+      }
     });
   }
 
@@ -80,13 +84,31 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  Future navigateToSettingsPage(context) async {
+    Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SettingsPage(parentContext: context)))
+        .then((value) {
+      refreshLists();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder(
         valueListenable: scrollCheck,
         builder: (context, bool upDirection, Widget child) {
           return Scaffold(
-            appBar: AppBar(title: Text('MainPage')),
+            appBar: AppBar(
+              title: Text('MainPage'),
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.settings),
+                  onPressed: () {
+                    navigateToSettingsPage(context);
+                  },
+                )
+              ],
+            ),
             body: Column(
               children: [
                 Time(),
@@ -101,52 +123,84 @@ class _MainPageState extends State<MainPage> {
               ],
             ),
             floatingActionButton: AnimatedOpacity(
-          opacity: upDirection ? 0 : 1,
-          duration: Duration(milliseconds: 300),
-          child: 
-         Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ButtonSubtitle(
-                          title: 'Add A Period',
-                        ),
-                        Padding(padding: EdgeInsets.only(right: 10)),
-                        FloatingActionButton(
-                          heroTag: 'period',
-                          onPressed: () {
-                            navigateToPeriodPage(context);
-                          },
-                          child: Text('P',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20)),
-                        ),
-                      ],
+              opacity: upDirection ? 1 : 0,
+              duration: Duration(milliseconds: 300),
+              child:
+                  Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ButtonSubtitle(
+                      title: 'Add A Period',
                     ),
-                    Padding(padding: EdgeInsets.only(top: 15)),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        ButtonSubtitle(
-                          title: 'Add A Course',
+                    Padding(padding: EdgeInsets.only(right: 10)),
+                    FloatingActionButton(
+                      heroTag: 'period',
+                      onPressed: () {
+                        navigateToPeriodPage(context);
+                      },
+                      child: Stack(children: [
+                        Text(
+                          'P',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 23,
+                            foreground: Paint()
+                              ..style = PaintingStyle.stroke
+                              ..strokeWidth = 2
+                              ..color = Colors.black,
+                          ),
                         ),
-                        Padding(padding: EdgeInsets.only(right: 10)),
-                        FloatingActionButton(
-                          heroTag: 'course',
-                          onPressed: () {
-                            navigateToCoursePage(context);
-                          },
-                          child: Text('C',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 20)),
+                        Text(
+                          "P",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 23,
+                            color: Colors.white,
+                          ),
                         ),
-                      ],
+                      ]),
                     ),
-                  ]),
+                  ],
+                ),
+                Padding(padding: EdgeInsets.only(top: 15)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ButtonSubtitle(
+                      title: 'Add A Course',
+                    ),
+                    Padding(padding: EdgeInsets.only(right: 10)),
+                    FloatingActionButton(
+                      heroTag: 'course',
+                      onPressed: () {
+                        navigateToCoursePage(context);
+                      },
+                      child: Stack(children: [
+                        Text(
+                          'C',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 23,
+                            foreground: Paint()
+                              ..style = PaintingStyle.stroke
+                              ..strokeWidth = 2
+                              ..color = Colors.black,
+                          ),
+                        ),
+                        Text(
+                          "C",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 23,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ]),
+                    )
+                  ],
+                ),
+              ]),
             ),
           );
         });
@@ -173,7 +227,7 @@ class ButtonSubtitle extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: Colors.black12),
           borderRadius: BorderRadius.all(Radius.circular(5)),
-          color: Colors.black12,
+          //color: Colors.black12,
         ),
         child: Padding(
           padding: const EdgeInsets.all(3.0),

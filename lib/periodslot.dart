@@ -62,10 +62,15 @@ class PeriodList extends StatefulWidget {
 
 class _PeriodListState extends State<PeriodList> {
   ScrollController _controller;
+  List<Period> currentPeriods;
 
 
   @override
   void initState() {
+
+    currentPeriods =  allFromDay((widget.day - 1) % 7);
+    currentPeriods.sort((a,b) => a.compareTo(b));
+    
     
     _controller = ScrollController()
       ..addListener(() {
@@ -82,7 +87,7 @@ class _PeriodListState extends State<PeriodList> {
   }
   @override
   Widget build(BuildContext context) {
-    final List<Period> currentPeriods = allFromDay((widget.day - 1) % 7);
+     currentPeriods =  allFromDay((widget.day - 1) % 7);
 
     return ListView.builder(
       controller: _controller,

@@ -116,7 +116,6 @@ class _PeriodInputsState extends State<PeriodInputs> {
           setState(() {
             courses = value;
              _course = courses.isEmpty ? null : courses[0];
-             print(_course.title);
           });       
         }
       });

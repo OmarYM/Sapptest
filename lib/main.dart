@@ -22,11 +22,13 @@ class MyApp extends StatelessWidget {
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
         primarySwatch: Colors.blue,
+        accentColor: Colors.red,
         // This makes the visual density adapt to the platform that you run
         // the app on. For desktop platforms, the controls will be smaller and
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+      ), 
+      darkTheme: ThemeData.dark(),
       home: MainPage()//MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }

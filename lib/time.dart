@@ -35,11 +35,12 @@ class _TimeState extends State<Time> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
     return Container(
       alignment: Alignment.topCenter,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Text(_timeString, style: TextStyle(fontSize: 60, fontWeight: FontWeight.bold,),),
+        child: Text(_timeString, style: TextStyle(fontSize: width/7, fontWeight: FontWeight.bold,),),
       ),
     );
   }
