@@ -10,6 +10,10 @@ import 'courseinput.dart';
 import 'package:infinity_page_view/infinity_page_view.dart';
 
 ValueNotifier<bool> scrollCheck = ValueNotifier(true);
+bool click;
+bool click1;
+bool appear;
+bool disappear;
 
 class MainPage extends StatefulWidget {
   MainPage({Key key}) : super(key: key);
@@ -18,7 +22,7 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   InfinityPageController page;
   int today;
 
@@ -26,6 +30,10 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     upDirection = true;
     flag = true;
+    click = false;
+    click1 = false;
+    appear = true;
+    disappear = true;
 
     today = DateTime.now().weekday;
     page = InfinityPageController(initialPage: 0);
@@ -49,7 +57,7 @@ class _MainPageState extends State<MainPage> {
     super.initState();
   }
 
-  refreshLists() {
+  void refreshLists() {
     dbperiods.getPeriods().then((value) {
       if (value != null) {
         setState(() {
@@ -68,25 +76,11 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  Future navigateToPeriodPage(context) async {
-    Navigator.push(
-            context, MaterialPageRoute(builder: (context) => PeriodInput()))
-        .then((value) {
-      refreshLists();
-    });
-  }
-
-  Future navigateToCoursePage(context) async {
-    Navigator.push(
-            context, MaterialPageRoute(builder: (context) => CourseInput()))
-        .then((value) {
-      refreshLists();
-    });
-  }
-
   Future navigateToSettingsPage(context) async {
     Navigator.push(
-            context, MaterialPageRoute(builder: (context) => SettingsPage(parentContext: context)))
+            context,
+            MaterialPageRoute(
+                builder: (context) => SettingsPage(parentContext: context)))
         .then((value) {
       refreshLists();
     });
@@ -94,122 +88,258 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('MainPage'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              navigateToSettingsPage(context);
+            },
+          )
+        ],
+      ),
+      body: Column(
+        children: [
+          Time(),
+          Expanded(
+            child: InfinityPageView(
+                controller: page,
+                itemCount: 7,
+                itemBuilder: (context, index) {
+                  return PeriodList(day: today + index);
+                }),
+          ),
+        ],
+      ),
+      floatingActionButton: ValueListenableBuilder(
         valueListenable: scrollCheck,
         builder: (context, bool upDirection, Widget child) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('MainPage'),
-              actions: [
-                IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed: () {
-                    navigateToSettingsPage(context);
-                  },
-                )
-              ],
+          if (appear != upDirection) {
+          Future.delayed(Duration(milliseconds: 100), () {
+            setState(() {
+              
+                appear = upDirection;
+
+                if (click & !upDirection) {
+                  click = false;
+                  click1 = false;
+                }
+              
+            });
+            
+
+          });
+          }
+
+          return Stack(alignment: Alignment.bottomRight, children: [
+            DoubleButton(
+              function: refreshLists,
             ),
-            body: Column(
-              children: [
-                Time(),
-                Expanded(
-                  child: InfinityPageView(
-                      controller: page,
-                      itemCount: 7,
-                      itemBuilder: (context, index) {
-                        return PeriodList(day: today + index);
-                      }),
-                ),
-              ],
-            ),
-            floatingActionButton: AnimatedOpacity(
-              opacity: upDirection ? 1 : 0,
+            AnimatedContainer(
+              margin: EdgeInsets.only(
+                bottom: appear ? 0 : 22,
+                right: appear ? 0 : 30,
+              ),
+              alignment: Alignment.center,
               duration: Duration(milliseconds: 300),
-              child:
-                  Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ButtonSubtitle(
-                      title: 'Add A Period',
+              width: appear ? 60 : 0,
+              height: appear ? 60 : 0,
+              child: FloatingActionButton(
+                heroTag: 'add',
+                onPressed: () {
+                  setState(() {
+                    print(click.toString() +
+                        '1 ' +
+                        click1.toString() +
+                        '2 ' +
+                        upDirection.toString());
+                    if (click1) {
+                      click1 = !click1;
+                    } else {
+                      click = !click;
+                      disappear = false;
+                    }
+                  });
+                },
+                child: Stack(children: [
+                  Text(
+                    '+',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 23,
+                      foreground: Paint()
+                        ..style = PaintingStyle.stroke
+                        ..strokeWidth = 2
+                        ..color = Colors.black,
                     ),
-                    Padding(padding: EdgeInsets.only(right: 10)),
-                    FloatingActionButton(
-                      heroTag: 'period',
-                      onPressed: () {
-                        navigateToPeriodPage(context);
-                      },
-                      child: Stack(children: [
-                        Text(
-                          'P',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 23,
-                            foreground: Paint()
-                              ..style = PaintingStyle.stroke
-                              ..strokeWidth = 2
-                              ..color = Colors.black,
-                          ),
-                        ),
-                        Text(
-                          "P",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 23,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ]),
+                  ),
+                  Text(
+                    "+",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 23,
+                      color: Colors.white,
                     ),
-                  ],
-                ),
-                Padding(padding: EdgeInsets.only(top: 15)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ButtonSubtitle(
-                      title: 'Add A Course',
-                    ),
-                    Padding(padding: EdgeInsets.only(right: 10)),
-                    FloatingActionButton(
-                      heroTag: 'course',
-                      onPressed: () {
-                        navigateToCoursePage(context);
-                      },
-                      child: Stack(children: [
-                        Text(
-                          'C',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 23,
-                            foreground: Paint()
-                              ..style = PaintingStyle.stroke
-                              ..strokeWidth = 2
-                              ..color = Colors.black,
-                          ),
-                        ),
-                        Text(
-                          "C",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 23,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ]),
-                    )
-                  ],
-                ),
-              ]),
+                  ),
+                ]),
+              ),
             ),
-          );
-        });
+          ]);
+        },
+      ),
+    );
   }
 
   @override
   void dispose() {
     page.dispose();
     super.dispose();
+  }
+}
+
+class DoubleButton extends StatefulWidget {
+  final Function function;
+  const DoubleButton({
+    Key key,
+    this.function,
+  }) : super(key: key);
+
+  @override
+  _DoubleButtonState createState() => _DoubleButtonState();
+}
+
+class _DoubleButtonState extends State<DoubleButton> {
+  @override
+  Widget build(BuildContext context) {
+    
+        return Stack(
+          alignment: Alignment.bottomRight,
+          children: [
+            AnimatedPositioned(
+                bottom: click & upDirection ? 125 : 7,
+                right: 8,
+                duration: Duration(milliseconds: 300),
+                onEnd: () {
+                  setState(() {
+                    if (click) {
+                      click1 = click;
+                    }else{
+                  disappear = true;
+                }
+                  });
+                },
+                curve: Curves.bounceInOut,
+                child: Opacity(
+    
+                    opacity: disappear ? 0 : 1,
+                child: AddButton(
+                  title: 'Add Period',
+                  function: widget.function,
+                  icon: 'P',
+                  tag: 'period',
+                ))),
+        AnimatedPositioned(
+            bottom: click1 & upDirection ? 70 : 7,
+            right: 8,
+            duration: Duration(milliseconds: 300),
+            onEnd: () {
+              setState(() {
+
+                if (!click1) {
+                  click = click1;
+                }
+              });
+            },
+            curve: Curves.bounceInOut,
+            child: Opacity(
+                opacity: disappear ? 0 : 1,
+                child: AddButton(
+                  title: 'Add Course',
+                  function: widget.function,
+                  icon: 'C',
+                  tag: 'course',
+                ))),
+      ],
+    );
+  }
+}
+
+class AddButton extends StatelessWidget {
+  final title, tag, function, icon;
+
+  const AddButton({
+    Key key,
+    this.title,
+    this.tag,
+    this.function,
+    this.icon,
+  }) : super(key: key);
+
+  Future navigateToPeriodPage(context) async {
+    Navigator.push(
+            context, MaterialPageRoute(builder: (context) => PeriodInput()))
+        .then((value) {
+      function();
+    });
+  }
+
+  Future navigateToCoursePage(context) async {
+    Navigator.push(
+            context, MaterialPageRoute(builder: (context) => CourseInput()))
+        .then((value) {
+      function();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        AnimatedOpacity(
+          opacity: click1 & upDirection ? 1 : 0,
+          duration: Duration(milliseconds: 100),
+          child: ButtonSubtitle(
+            title: title,
+          ),
+        ),
+        Padding(padding: EdgeInsets.only(right: 10)),
+        FloatingActionButton(
+          mini: true,
+          heroTag: tag,
+          onPressed: () {
+            if (icon == 'P') {
+              navigateToPeriodPage(context);
+            } else {
+              navigateToCoursePage(context);
+            }
+          },
+          child: Stack(children: [
+            Text(
+              icon,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 23,
+                foreground: Paint()
+                  ..style = PaintingStyle.stroke
+                  ..strokeWidth = 2
+                  ..color = Colors.black,
+              ),
+            ),
+            Text(
+              icon,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 23,
+                color: Colors.white,
+              ),
+            ),
+          ]),
+        ),
+      ],
+    );
   }
 }
 

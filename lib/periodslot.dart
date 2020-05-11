@@ -69,7 +69,6 @@ class _PeriodListState extends State<PeriodList> {
   void initState() {
 
     currentPeriods =  allFromDay((widget.day - 1) % 7);
-    currentPeriods.sort((a,b) => a.compareTo(b));
     
     
     _controller = ScrollController()
