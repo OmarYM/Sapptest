@@ -90,11 +90,11 @@ class _PeriodInputsState extends State<PeriodInputs> {
   void createSnackBar(BuildContext context) {
     final snackBar = new SnackBar(
       behavior: SnackBarBehavior.fixed,
-        content: new Text('Seems like there are no courses.'),
-        action: SnackBarAction(
-            label: 'Add A Course',
-            onPressed: () => navigateToCoursePage(context)),
-        );
+      content: new Text('Seems like there are no courses.'),
+      action: SnackBarAction(
+          label: 'Add A Course',
+          onPressed: () => navigateToCoursePage(context)),
+    );
 
     // Find the Scaffold in the Widget tree and use it to show a SnackBar!
     if (courses.isEmpty) {
@@ -106,19 +106,19 @@ class _PeriodInputsState extends State<PeriodInputs> {
     Navigator.push(
             context, MaterialPageRoute(builder: (context) => CourseInput()))
         .then((value) {
-          refreshList();
-        } );
+      refreshList();
+    });
   }
 
   refreshList() {
-      dbcourses.getCourses().then((value) {
-        if (value.isNotEmpty) {
-          setState(() {
-            courses = value;
-             _course = courses.isEmpty ? null : courses[0];
-          });       
-        }
-      });
+    dbcourses.getCourses().then((value) {
+      if (value.isNotEmpty) {
+        setState(() {
+          courses = value;
+          _course = courses.isEmpty ? null : courses[0];
+        });
+      }
+    });
   }
 
   @override
@@ -135,6 +135,7 @@ class _PeriodInputsState extends State<PeriodInputs> {
           padding: const EdgeInsets.all(15.0),
           child: DropdownButtonFormField(
             key: _courseFormKey,
+            isExpanded: true,
             value: _course != null ? _course : null,
             items: courses.map<DropdownMenuItem<Course>>((Course value) {
               return DropdownMenuItem<Course>(
@@ -176,7 +177,7 @@ class _PeriodInputsState extends State<PeriodInputs> {
             key: _dayFormKey,
             context: context,
             validator: (value) {
-              if (value == null) {
+              if (value == null || value.isEmpty) {
                 return 'Please Select One Day';
               } else {
                 return null;
@@ -258,13 +259,18 @@ class _PeriodInputsState extends State<PeriodInputs> {
                   var title = _textFormKey.currentState.value;
                   var startTime = _startFormKey.currentState.value;
                   var endTime = _endFormKey.currentState.value;
-                  var day = _dayFormKey.currentState.value;
                   var course = _courseFormKey.currentState.value;
 
-                  Period period =
-                      Period(startTime, endTime, title, day, course);
+                  _dayFormKey.currentState.value.forEach((day) {
+                    Period period =
+                        Period(id, startTime, endTime, title, day, course);
 
-                  dbperiods.save(period);
+                    dbperiods.save(period);
+
+                    id++;
+
+                    prefs.saveId(id);
+                  });
 
                   Navigator.pop(context);
                 } else {

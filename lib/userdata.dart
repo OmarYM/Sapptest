@@ -2,6 +2,8 @@ import 'dart:ui';
 
 import 'package:Sapptest/dbhelper.dart';
 import 'package:Sapptest/period.dart';
+import 'package:Sapptest/sharedPrefs.dart';
+import 'package:flutter/material.dart';
 import 'course.dart';
 
 
@@ -10,6 +12,10 @@ DBHelperCourse dbcourses;
 
 List<Period> periods;
 List<Course> courses;
+
+
+
+SharedPref prefs;
 
 bool courseCheck(String title) {
   bool result = false;
@@ -40,19 +46,34 @@ List<Period> allFromCourse(String title) {
   List<Period> result = [];
 
   periods.forEach((element) {
-    if (title.toLowerCase().compareTo(element.title.toLowerCase()) == 0) {
+    if (title.toLowerCase().compareTo(element.course.title.toLowerCase()) == 0) {
       result.add(element);
+
     }
   });
 
   return result;
 }
 
+void deleteCourse(Course course){
+  periods.forEach((element) {
+    if (course.title.toLowerCase().compareTo(element.course.title.toLowerCase()) == 0) {
+      dbperiods.delete(element.id);
+      periods.remove(element);
+      
+    }   
+  });
+
+  dbcourses.delete(course.title);
+  courses.remove(course);
+   
+}
+
 bool upDirection, flag ;
 
 Brightness brightness;
 
-
+int id;
 
  String getDayOfTheWeek(int day) {
     switch (day) {

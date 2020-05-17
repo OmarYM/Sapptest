@@ -8,15 +8,17 @@ class Period implements Comparable{
   TimeOfDay endTime = TimeOfDay(hour: 0, minute: 0);
   Course course = Course(title: '') ;
   int day;
+  int id;
   String title;
 
-  Period(this.startTime, this.endTime, this.title, this.day, this.course);
+  Period(this.id, this.startTime, this.endTime, this.title, this.day, this.course);
 
   Period.fromMap(Map<String, dynamic> json)
       : startTime = fromInt(json['startTime']),
         endTime = fromInt(json['endTime']),
         day = json['day'],
         course = Course.fromMap(jsonDecode(json['course'])),
+        id = json['id'],
         title = json['title'];
 
   Map<String, dynamic> toMap() => {
@@ -24,6 +26,7 @@ class Period implements Comparable{
         'endTime': toInt(endTime),
         'day': day,
         'course': jsonEncode(course.toMap()),
+        'id' : id,
         'title': title,
       };
 

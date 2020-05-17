@@ -1,7 +1,9 @@
 import 'package:Sapptest/periodslot.dart';
 import 'package:Sapptest/settingsPage.dart';
+import 'package:Sapptest/sharedPrefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'courseslot.dart';
 import 'time.dart';
 import 'userdata.dart';
 import 'dbhelper.dart';
@@ -14,6 +16,7 @@ bool click;
 bool click1;
 bool appear;
 bool disappear;
+final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class MainPage extends StatefulWidget {
   MainPage({Key key}) : super(key: key);
@@ -28,6 +31,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
+    prefs = SharedPref();
+
     upDirection = true;
     flag = true;
     click = false;
@@ -47,6 +52,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     //dbcourses.createTable();
     //dbperiods.createTable();
 
+    prefs.getId().then((value) => id = value ?? 0);
+
     periods = [];
     courses = [];
 
@@ -62,7 +69,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       if (value != null) {
         setState(() {
           periods = value;
-          periods.sort();
         });
       }
     });
@@ -70,7 +76,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       if (value != null) {
         setState(() {
           courses = value;
-          courses.sort((a, b) => a.title.compareTo(b.title));
         });
       }
     });
@@ -86,108 +91,155 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     });
   }
 
+  void _openDrawer() {
+    _scaffoldKey.currentState.openDrawer();
+  }
+
+  void _closeDrawer() {
+    Navigator.of(context).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('MainPage'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.settings),
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          //title: Text('MainPage'),
+          leading: Container(),
+          actions: [
+            IconButton(
+                icon: Icon(Icons.dehaze),
+                onPressed: () {
+                  _openDrawer();
+                }),
+            Flexible(
+              fit: FlexFit.loose,
+              child: TabBar(tabs: [
+                Tab(icon: Icon(Icons.home)),
+                Tab(icon: Icon(Icons.school))
+              ]),
+            ),
+          ],
+        ),
+        drawer: Drawer(
+          child: Scaffold(
+            appBar: AppBar(
+              
+            ),
+                      body: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                const Text('This is the Drawer'),
+                RaisedButton(
+                  onPressed: _closeDrawer,
+                  child: const Text('Close Drawer'),
+                ),
+                Expanded(child: Container()),
+                Divider(height: 5),
+                Center(
+            child: FlatButton(
             onPressed: () {
               navigateToSettingsPage(context);
             },
-          )
-        ],
-      ),
-      body: Column(
-        children: [
-          Time(),
-          Expanded(
-            child: InfinityPageView(
-                controller: page,
-                itemCount: 7,
-                itemBuilder: (context, index) {
-                  return PeriodList(day: today + index);
-                }),
+            child: Text('Settings'))),
+            Divider(height: 5),
+              ],
+            ),
           ),
-        ],
-      ),
-      floatingActionButton: ValueListenableBuilder(
-        valueListenable: scrollCheck,
-        builder: (context, bool upDirection, Widget child) {
-          if (appear != upDirection) {
-          Future.delayed(Duration(milliseconds: 100), () {
-            setState(() {
-              
-                appear = upDirection;
-
-                if (click & !upDirection) {
-                  click = false;
-                  click1 = false;
-                }
-              
-            });
-            
-
-          });
-          }
-
-          return Stack(alignment: Alignment.bottomRight, children: [
-            DoubleButton(
-              function: refreshLists,
+        ),
+        body: TabBarView(
+          children: [
+            Column(
+              children: [
+                Time(),
+                Expanded(
+                  child: InfinityPageView(
+                      controller: page,
+                      itemCount: 7,
+                      itemBuilder: (context, index) {
+                        return PeriodList(day: today + index);
+                      }),
+                ),
+              ],
             ),
-            AnimatedContainer(
-              margin: EdgeInsets.only(
-                bottom: appear ? 0 : 22,
-                right: appear ? 0 : 30,
-              ),
-              alignment: Alignment.center,
-              duration: Duration(milliseconds: 300),
-              width: appear ? 60 : 0,
-              height: appear ? 60 : 0,
-              child: FloatingActionButton(
-                heroTag: 'add',
-                onPressed: () {
-                  setState(() {
-                    print(click.toString() +
-                        '1 ' +
-                        click1.toString() +
-                        '2 ' +
-                        upDirection.toString());
-                    if (click1) {
-                      click1 = !click1;
-                    } else {
-                      click = !click;
-                      disappear = false;
-                    }
+            Column(children: [
+              Expanded(
+                child: CourseList(),
+              )
+            ]),
+          ],
+        ),
+        floatingActionButton: ValueListenableBuilder(
+          valueListenable: scrollCheck,
+          builder: (context, bool upDirection, Widget child) {
+            if (appear != upDirection) {
+              Future.delayed(Duration(milliseconds: 0), () {
+                setState(() {
+                  Future.delayed(Duration(milliseconds: 200), () {
+                    appear = upDirection;
                   });
-                },
-                child: Stack(children: [
-                  Text(
-                    '+',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 23,
-                      foreground: Paint()
-                        ..style = PaintingStyle.stroke
-                        ..strokeWidth = 2
-                        ..color = Colors.black,
-                    ),
-                  ),
-                  Text(
-                    "+",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 23,
-                      color: Colors.white,
-                    ),
-                  ),
-                ]),
+
+                  if (click & !upDirection) {
+                    click = false;
+                    click1 = false;
+                  }
+                });
+              });
+            }
+
+            return Stack(alignment: Alignment.bottomRight, children: [
+              DoubleButton(
+                function: refreshLists,
               ),
-            ),
-          ]);
-        },
+              AnimatedContainer(
+                margin: EdgeInsets.only(
+                  bottom: appear ? 0 : 22,
+                  right: appear ? 0 : 30,
+                ),
+                alignment: Alignment.center,
+                duration: Duration(milliseconds: 300),
+                width: appear ? 60 : 0,
+                height: appear ? 60 : 0,
+                child: FloatingActionButton(
+                  heroTag: 'add',
+                  onPressed: () {
+                    setState(() {
+                      if (click1) {
+                        click1 = !click1;
+                      } else {
+                        click = !click;
+                        disappear = false;
+                      }
+                    });
+                  },
+                  child: Stack(children: [
+                    Text(
+                      '+',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 23,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 2
+                          ..color = Colors.black,
+                      ),
+                    ),
+                    Text(
+                      "+",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 23,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ]),
+                ),
+              ),
+            ]);
+          },
+        ),
       ),
     );
   }
@@ -213,27 +265,25 @@ class DoubleButton extends StatefulWidget {
 class _DoubleButtonState extends State<DoubleButton> {
   @override
   Widget build(BuildContext context) {
-    
-        return Stack(
-          alignment: Alignment.bottomRight,
-          children: [
-            AnimatedPositioned(
-                bottom: click & upDirection ? 125 : 7,
-                right: 8,
-                duration: Duration(milliseconds: 300),
-                onEnd: () {
-                  setState(() {
-                    if (click) {
-                      click1 = click;
-                    }else{
+    return Stack(
+      alignment: Alignment.bottomRight,
+      children: [
+        AnimatedPositioned(
+            bottom: click & upDirection ? 125 : 7,
+            right: 6,
+            duration: Duration(milliseconds: 300),
+            onEnd: () {
+              setState(() {
+                if (click) {
+                  click1 = click;
+                } else {
                   disappear = true;
                 }
-                  });
-                },
-                curve: Curves.bounceInOut,
-                child: Opacity(
-    
-                    opacity: disappear ? 0 : 1,
+              });
+            },
+            curve: Curves.bounceInOut,
+            child: Opacity(
+                opacity: disappear ? 0 : 1,
                 child: AddButton(
                   title: 'Add Period',
                   function: widget.function,
@@ -242,13 +292,15 @@ class _DoubleButtonState extends State<DoubleButton> {
                 ))),
         AnimatedPositioned(
             bottom: click1 & upDirection ? 70 : 7,
-            right: 8,
+            right: 6,
             duration: Duration(milliseconds: 300),
             onEnd: () {
               setState(() {
-
                 if (!click1) {
                   click = click1;
+                }
+                if (appear && !upDirection) {
+                  appear = upDirection;
                 }
               });
             },
@@ -305,7 +357,7 @@ class AddButton extends StatelessWidget {
             title: title,
           ),
         ),
-        Padding(padding: EdgeInsets.only(right: 10)),
+        Padding(padding: EdgeInsets.only(right: 8)),
         FloatingActionButton(
           mini: true,
           heroTag: tag,
