@@ -17,16 +17,84 @@ class CoursePage extends StatefulWidget {
 
 class _CoursePageState extends State<CoursePage> {
   List<Period> coursePeriods;
+  var notChecked;
+  var passedthrough;
+  List<bool> isnext;
 
   @override
   void initState() {
     coursePeriods = allFromCourse(widget.course.title);
+    isnext = List.filled(coursePeriods.length, false);
+    notChecked = true;
+
+    passthrough();
+
     super.initState();
+  }
+
+  double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
+
+  bool isNext(int index) {
+    if (notChecked) {
+      if (coursePeriods[index].day + 1 == DateTime.now().weekday) {
+        if (index == 0) {
+          if (toDouble(coursePeriods[0].startTime) >
+              toDouble(TimeOfDay.now())) {
+            notChecked = false;
+
+            return true;
+          }
+        } else {
+          if (toDouble(coursePeriods[index].startTime) >
+                  toDouble(TimeOfDay.now()) &&
+              toDouble(coursePeriods[index - 1].startTime) <
+                  toDouble(TimeOfDay.now())) {
+            notChecked = false;
+            print(2);
+            return true;
+          }
+        }
+      } else if (coursePeriods[index].day + 1 > DateTime.now().weekday) {
+        notChecked = false;
+
+        return true;
+      } else if (coursePeriods[index].day + 1 < DateTime.now().weekday &&
+          passedthrough) {
+        notChecked = false;
+
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void passthrough() {
+    passedthrough = false;
+    for (var i = 0; i < coursePeriods.length; i++) {
+      isnext[i] = isNext(i);
+    }
+
+    passedthrough = true;
+    if (notChecked) {
+      for (var i = 0; i < coursePeriods.length; i++) {
+        isnext[i] = isNext(i);
+      }
+    }
+  }
+
+  void callback(Period period) {
+    setState(() {
+      //print(coursePeriods[index].id);
+      coursePeriods.remove(period);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     coursePeriods = allFromCourse(widget.course.title);
+    notChecked = true;
+    isnext = List.filled(coursePeriods.length, false);
+    passthrough();
 
     return Scaffold(
       appBar: AppBar(
@@ -73,6 +141,7 @@ class _CoursePageState extends State<CoursePage> {
                 : Colors.grey[850],
       ),
       body: ListView.builder(
+        key: new Key('huh'),
         itemBuilder: (context, index) {
           return index == 0
               ? Hero(
@@ -93,7 +162,12 @@ class _CoursePageState extends State<CoursePage> {
                   ))
               : coursePeriods.isEmpty
                   ? EmptyMessage()
-                  : PeriodSlot(period: coursePeriods[index - 1]);
+                  : PeriodSlot(
+                      index: index-1,
+                      period: coursePeriods[index - 1],
+                      isNext: isnext[index - 1],
+                      function: callback,
+                    );
         },
         itemCount: coursePeriods.isEmpty ? 2 : coursePeriods.length + 1,
       ),
@@ -122,13 +196,17 @@ class EmptyMessage extends StatelessWidget {
 
 class PeriodSlot extends StatefulWidget {
   final int index;
-
+  final Function function;
   final Period period;
+
+  final isNext;
 
   PeriodSlot({
     Key key,
     @required this.period,
     this.index,
+    this.isNext,
+    this.function,
   }) : super(key: key);
 
   @override
@@ -158,27 +236,8 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
         height: deleted ? 0 : null,
         width: deleted ? 0 : null,
         child: Stack(children: [
-          deleted
-              ? Container()
-              : ListTile(
-                  trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        setState(() {
-                          deleted = true;
-                          periods.remove(widget.period);
-                          dbperiods.delete(widget.period.id);
-                        });
-                      }),
-                ),
-          AnimatedContainer(
-            curve: Curves.bounceOut,
-            width: selected ? width * 0.8 : width,
-            color: MediaQuery.of(context).platformBrightness == Brightness.light
-                ? Colors.grey[50]
-                : Colors.grey[850],
-            //padding: EdgeInsets.only(right: selected ? 100 : 0),
-            duration: Duration(milliseconds: 500),
+          Opacity(
+            opacity: 0,
             child: ListTile(
               onLongPress: () {
                 setState(() {
@@ -190,24 +249,45 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                   selected = false;
                 });
               },
-              title: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Center(child: Text(widget.period.course.title)),
+              leading: widget.isNext
+                  ? Icon(
+                      Icons.play_arrow,
+                      color: Theme.of(context).accentColor,
+                    )
+                  : null,
+              title: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Center(
+                      child: Text(
+                    widget.period.course.title,
+                    textAlign: TextAlign.center,
+                  )),
+                ),
               ),
               subtitle: Column(
                 children: [
-                  Center(child: Text(widget.period.title)),
-                  Center(child: Text(getDayOfTheWeek(widget.period.day))),
+                  Center(
+                      child: Text(
+                    widget.period.title,
+                    textAlign: TextAlign.center,
+                  )),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(widget.period.startTime.format(context)),
+                        child: Text(
+                          widget.period.startTime.format(context),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(widget.period.endTime.format(context)),
+                        child: Text(
+                          widget.period.endTime.format(context),
+                          textAlign: TextAlign.center,
+                        ),
                       )
                     ],
                   ),
@@ -217,6 +297,109 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                 ],
               ),
             ),
+          ),
+          deleted
+              ? Container()
+              : ListTile(
+                  trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        
+
+                        setState(() {
+                          dbperiods.delete(widget.period.id);
+                          deleted = true;
+                        });
+                        widget.function(widget.period);
+
+                      }),
+                ),
+          AnimatedPositioned(
+            right: selected ? width * 0.2 : 0,
+            //top: 50,
+            duration: Duration(milliseconds: 500),
+            curve: Curves.bounceOut,
+            child: AnimatedContainer(
+              curve: Curves.bounceOut,
+              width: width,
+              color:
+                  MediaQuery.of(context).platformBrightness == Brightness.light
+                      ? Colors.grey[50]
+                      : Colors.grey[850],
+              duration: Duration(milliseconds: 500),
+              child: ListTile(
+                //contentPadding: EdgeInsets.only(left: width*0.2),
+                onLongPress: () {
+                  setState(() {
+                    selected = true;
+                  });
+                },
+                onTap: () {
+                  setState(() {
+                    selected = false;
+                  });
+                },
+                title: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Container(
+                        width: width * 0.6,
+                        child: Text(
+                          widget.period.title,
+                          textAlign: TextAlign.center,
+                        )),
+                  ),
+                ),
+                subtitle: Container(
+                  width: width * 0.6,
+                  child: Column(
+                    children: [
+                      Center(
+                          child: Text(
+                        getDayOfTheWeek(widget.period.day) + widget.period.id.toString(),
+                        textAlign: TextAlign.center,
+                      )),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.period.startTime.format(context),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Text('-'),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.period.endTime.format(context),
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        ],
+                      ),
+                      Divider(
+                        height: 15,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          AnimatedPositioned(
+            curve: Curves.bounceOut,
+            top: 20,
+            right: selected ? width * 1 : width * 0.8,
+            width: width * 0.2,
+            child: widget.isNext
+                ? Icon(
+                    Icons.play_arrow,
+                    color: Theme.of(context).accentColor,
+                  )
+                : Container(),
+            duration: Duration(milliseconds: 490),
           ),
         ]),
       ),

@@ -7,11 +7,13 @@ import 'period.dart';
 class PeriodSlot extends StatefulWidget {
   final int index;
   final Period period;
+  final bool isNext;
 
   PeriodSlot({
     Key key,
     @required this.period,
     this.index,
+    this.isNext,
   }) : super(key: key);
 
   @override
@@ -41,6 +43,68 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
         height: deleted ? 0 : null,
         width: deleted ? 0 : null,
         child: Stack(children: [
+          Opacity(
+            opacity: 0,
+            child: ListTile(
+              onLongPress: () {
+                setState(() {
+                  selected = true;
+                });
+              },
+              onTap: () {
+                setState(() {
+                  selected = false;
+                });
+              },
+              leading: widget.isNext
+                  ? Icon(
+                      Icons.play_arrow,
+                      color: Theme.of(context).accentColor,
+                    )
+                  : null,
+              title: Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Center(
+                      child: Text(
+                    widget.period.course.title,
+                    textAlign: TextAlign.center,
+                  )),
+                ),
+              ),
+              subtitle: Column(
+                children: [
+                  Center(
+                      child: Text(
+                    widget.period.title,
+                    textAlign: TextAlign.center,
+                  )),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          widget.period.startTime.format(context),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          widget.period.endTime.format(context),
+                          textAlign: TextAlign.center,
+                        ),
+                      )
+                    ],
+                  ),
+                  Divider(
+                    height: 15,
+                  ),
+                ],
+              ),
+            ),
+          ),
           deleted
               ? Container()
               : ListTile(
@@ -54,51 +118,92 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                         });
                       }),
                 ),
-          AnimatedContainer(
-            curve: Curves.bounceOut,
-            width: selected ? width * 0.8 : width,
-            color: MediaQuery.of(context).platformBrightness == Brightness.light
-                ? Colors.grey[50]
-                : Colors.grey[850],
-            //padding: EdgeInsets.only(right: selected ? 100 : 0),
+          AnimatedPositioned(
+            right: selected ? width * 0.2 : 0,
+            //top: 50,
             duration: Duration(milliseconds: 500),
-            child: ListTile(
-              onLongPress: () {
-                setState(() {
-                  selected = true;
-                });
-              },
-              onTap: () {
-                setState(() {
-                  selected = false;
-                });
-              },
-              title: Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Center(child: Text(widget.period.course.title)),
-              ),
-              subtitle: Column(
-                children: [
-                  Center(child: Text(widget.period.title)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+            curve: Curves.bounceOut,
+            child: AnimatedContainer(
+              curve: Curves.bounceOut,
+              width: width,
+              color:
+                  MediaQuery.of(context).platformBrightness == Brightness.light
+                      ? Colors.grey[50]
+                      : Colors.grey[850],
+              duration: Duration(milliseconds: 500),
+              child: ListTile(
+                //contentPadding: EdgeInsets.only(left: width*0.2),
+                onLongPress: () {
+                  setState(() {
+                    selected = true;
+                  });
+                },
+                onTap: () {
+                  setState(() {
+                    selected = false;
+                  });
+                },
+                title: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 8.0),
+                    child: Container(
+                        width: width * 0.6,
+                        child: Text(
+                          widget.period.course.title + widget.period.id.toString(),
+                          textAlign: TextAlign.center,
+                        )),
+                  ),
+                ),
+                subtitle: Container(
+                  width: width * 0.6,
+                  child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(widget.period.startTime.format(context)),
+                      Center(
+                          child: Text(
+                        widget.period.title,
+                        textAlign: TextAlign.center,
+                      )),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.period.startTime.format(context),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Text('-'),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.period.endTime.format(context),
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(widget.period.endTime.format(context)),
-                      )
+                      Divider(
+                        height: 15,
+                      ),
                     ],
                   ),
-                  Divider(
-                    height: 15,
-                  ),
-                ],
+                ),
               ),
             ),
+          ),
+          AnimatedPositioned(
+            curve: Curves.bounceOut,
+            top: 20,
+            right: selected ? width * 1 : width * 0.8,
+            width: width * 0.2,
+            child: widget.isNext
+                ? Icon(
+                    Icons.play_arrow,
+                    color: Theme.of(context).accentColor,
+                  )
+                : Container(),
+            duration: Duration(milliseconds: 490),
           ),
         ]),
       ),
@@ -139,6 +244,27 @@ class _PeriodListState extends State<PeriodList> {
     super.initState();
   }
 
+  double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
+
+  bool isnext(index) {
+    if (widget.day % 7 != DateTime.now().weekday % 7) {
+      return false;
+    } else if (index == 0) {
+      if (toDouble(currentPeriods[0].startTime) > toDouble(TimeOfDay.now())) {
+        return true;
+      }
+    } else {
+      if (toDouble(currentPeriods[index].startTime) >
+              toDouble(TimeOfDay.now()) &&
+          toDouble(currentPeriods[index - 1].startTime) <
+              toDouble(TimeOfDay.now())) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     currentPeriods = allFromDay((widget.day - 1) % 7);
@@ -161,6 +287,7 @@ class _PeriodListState extends State<PeriodList> {
                 : PeriodSlot(
                     period: currentPeriods[index - 1],
                     index: index,
+                    isNext: isnext(index - 1),
                   );
       },
       itemCount: currentPeriods.isEmpty ? 2 : currentPeriods.length + 1,

@@ -215,9 +215,9 @@ class _PeriodInputsState extends State<PeriodInputs> {
                   if (value == null || _endFormKey.currentState.value == null) {
                     return 'Please Enter a Time';
                   } else if (_endFormKey != null &&
-                      _endFormKey.currentState.value.hour * 10 +
+                      _endFormKey.currentState.value.hour * 100 +
                               _endFormKey.currentState.value.minute <
-                          value.hour * 10 + value.minute) {
+                          value.hour * 100 + value.minute) {
                     return 'Start Time Must Be Earlier Than End Time';
                   } else {
                     return null;

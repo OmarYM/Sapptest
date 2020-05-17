@@ -3,6 +3,7 @@ import 'package:Sapptest/settingsPage.dart';
 import 'package:Sapptest/sharedPrefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:page_transition/page_transition.dart';
 import 'courseslot.dart';
 import 'time.dart';
 import 'userdata.dart';
@@ -91,13 +92,30 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     });
   }
 
+  Future navigateToPeriodPage(context) async {
+    Navigator.push(
+            context,
+            PageTransition(
+                child: PeriodInput(), type: PageTransitionType.leftToRight))
+        .then((value) {
+      refreshLists();
+    });
+  }
+
+  Future navigateToCoursePage(context) async {
+    Navigator.push(
+            context,
+            PageTransition(
+                child: CourseInput(), type: PageTransitionType.leftToRight))
+        .then((value) {
+      refreshLists();
+    });
+  }
+
   void _openDrawer() {
     _scaffoldKey.currentState.openDrawer();
   }
 
-  void _closeDrawer() {
-    Navigator.of(context).pop();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,26 +143,54 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         ),
         drawer: Drawer(
           child: Scaffold(
-            appBar: AppBar(
-              
-            ),
-                      body: Column(
+            appBar: AppBar(leading: Container(),
+            title: Align(alignment: Alignment.centerLeft, child: Text('Welcome')),),
+            body: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                const Text('This is the Drawer'),
-                RaisedButton(
-                  onPressed: _closeDrawer,
-                  child: const Text('Close Drawer'),
-                ),
-                Expanded(child: Container()),
+                Center(
+                    child: SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                      onPressed: () {
+                        navigateToPeriodPage(context);
+                      },
+                      child: Text('Add A Period')),
+                )),
                 Divider(height: 5),
                 Center(
-            child: FlatButton(
-            onPressed: () {
-              navigateToSettingsPage(context);
-            },
-            child: Text('Settings'))),
-            Divider(height: 5),
+                    child: SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                      onPressed: () {
+                        navigateToCoursePage(context);
+                      },
+                      child: Text('Add A Course')),
+                )),
+                Divider(height: 5),
+                Center(
+                    child: SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                      onPressed: () {
+                        navigateToSettingsPage(context);
+                      },
+                      child: Text('Settings')),
+                )),
+                Divider(height: 5),
+                Expanded(
+                  child: Container(),
+                ),
+                Center(
+                    child: SizedBox(
+                  width: double.infinity,
+                  child: FlatButton(
+                      onPressed: () {
+                        //navigateToSettingsPage(context);
+                      },
+                      child: Text('About')),
+                )),
+                Divider(height: 5),
               ],
             ),
           ),
@@ -153,7 +199,14 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
           children: [
             Column(
               children: [
-                Time(),
+                Column(
+                  children: [
+                    Time(),
+                    Divider(
+                      thickness: 3,
+                    ),
+                  ],
+                ),
                 Expanded(
                   child: InfinityPageView(
                       controller: page,
@@ -166,7 +219,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ),
             Column(children: [
               Expanded(
-                child: CourseList(),
+                child: CourseList(function: refreshLists,),
               )
             ]),
           ],
@@ -271,7 +324,7 @@ class _DoubleButtonState extends State<DoubleButton> {
         AnimatedPositioned(
             bottom: click & upDirection ? 125 : 7,
             right: 6,
-            duration: Duration(milliseconds: 300),
+            duration: Duration(milliseconds: 200),
             onEnd: () {
               setState(() {
                 if (click) {
@@ -282,8 +335,8 @@ class _DoubleButtonState extends State<DoubleButton> {
               });
             },
             curve: Curves.bounceInOut,
-            child: Opacity(
-                opacity: disappear ? 0 : 1,
+            child: Container(
+                width: disappear ? 0 : null,
                 child: AddButton(
                   title: 'Add Period',
                   function: widget.function,
@@ -293,7 +346,7 @@ class _DoubleButtonState extends State<DoubleButton> {
         AnimatedPositioned(
             bottom: click1 & upDirection ? 70 : 7,
             right: 6,
-            duration: Duration(milliseconds: 300),
+            duration: Duration(milliseconds: 200),
             onEnd: () {
               setState(() {
                 if (!click1) {
@@ -305,8 +358,8 @@ class _DoubleButtonState extends State<DoubleButton> {
               });
             },
             curve: Curves.bounceInOut,
-            child: Opacity(
-                opacity: disappear ? 0 : 1,
+            child: Container(
+                width: disappear ? 0 : null,
                 child: AddButton(
                   title: 'Add Course',
                   function: widget.function,

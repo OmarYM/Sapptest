@@ -9,8 +9,9 @@ import 'mainPage.dart';
 
 class CourseSlot extends StatelessWidget {
   final Course course;
+  final Function function;
   final int index;
-  CourseSlot({Key key, this.course, this.index}) : super(key: key);
+  CourseSlot({Key key, this.course, this.index, this.function}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class CourseSlot extends StatelessWidget {
                   child: CoursePage(
                         course: course,
                         index: index,
-                      ))).then((value) {});
+                      ))).then((value) {function();});
         },
         contentPadding: EdgeInsets.all(0),
         visualDensity: VisualDensity.compact,
@@ -58,9 +59,10 @@ class CourseSlot extends StatelessWidget {
 
 class CourseList extends StatefulWidget {
   final int day;
+  final Function function;
   const CourseList({
     Key key,
-    this.day,
+    this.day, this.function,
   }) : super(key: key);
 
   @override
@@ -69,6 +71,7 @@ class CourseList extends StatefulWidget {
 
 class _CourseListState extends State<CourseList> {
   ScrollController _controller;
+  
 
   @override
   void initState() {
@@ -95,15 +98,18 @@ class _CourseListState extends State<CourseList> {
       itemBuilder: (context, index) {
         return index == 0
             ? Column(children: [
-                Text(
-                  "Courses",
-                  style: TextStyle(
-                    fontSize: width / 7,
-                    fontWeight: FontWeight.bold,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    "Courses",
+                    style: TextStyle(
+                      fontSize: width / 7,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Divider(
-                  thickness: 2,
+                  thickness: 3,
                 ),
               ])
             : courses.isEmpty
@@ -116,6 +122,7 @@ class _CourseListState extends State<CourseList> {
                         child: Column(children: [
                           Material(
                             child: CourseSlot(
+                              function: widget.function,
                               course: courses[index - 1],
                               index: index,
                             ),
