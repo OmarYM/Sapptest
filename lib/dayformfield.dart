@@ -2,26 +2,23 @@ import 'package:flutter/material.dart';
 
 import 'userdata.dart';
 
-int _groupValue;
 
-class DayFormField extends FormField<int> {
-
-  
+class DayFormField extends FormField<List<int>> {
 
   DayFormField({
     Key key,
-    FormFieldSetter<int> onSaved,
-    FormFieldValidator<int> validator,
-    int initialValue,
+    FormFieldSetter<List<int>> onSaved,
+    FormFieldValidator<List<int>> validator,
+    List<int> initialValue,
     bool autovalidate = false,
     @required BuildContext context,
   }) : super(
             key: key,
             onSaved: onSaved,
             validator: validator,
-            initialValue: initialValue,
+            initialValue: [],
             autovalidate: autovalidate,
-            builder: (FormFieldState<int> state) {
+            builder: (FormFieldState<List<int>> state) {
 
               double width = MediaQuery.of(context).size.width;
 
@@ -122,11 +119,12 @@ class DayCheckBox extends StatefulWidget {
 }
 
 class _DayCheckBoxState extends State<DayCheckBox> {
-  
+  var checked;
+
   @override
   void initState() { 
 
-    _groupValue = null;
+    checked = false;
     super.initState();
     
   }
@@ -135,16 +133,26 @@ class _DayCheckBoxState extends State<DayCheckBox> {
   Widget build(BuildContext context) {
     
     return Column(children: [
-      Radio(
-        value: widget.day,
-        groupValue: _groupValue,
+      Checkbox(
+        value: checked,
         onChanged: (value) {
 
-            setState(() {
-              _groupValue = value;
-              widget.state.currentState.didChange(value);
+          setState(() {
+              checked = value;
             });
 
+          if(value){
+            var current = widget.state.currentState.value;
+              current.add(widget.day);
+              widget.state.currentState.didChange(current);
+          } else {
+            var current = widget.state.currentState.value;
+              current.remove(widget.day);
+              widget.state.currentState.didChange(current);
+          }
+
+          
+            
         },
       ),
       Text(getDayOfTheWeek(widget.day), style: TextStyle(fontSize: 14)),
