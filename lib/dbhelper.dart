@@ -60,7 +60,7 @@ class DBHelperPeriod {
   Future<List<Period>> getPeriods() async {
     var dbClient = await db;
     List<Map> maps = await dbClient
-        .query(TABLE, columns: [ID, COURSE, STARTTIME, ENDTIME, DAY]);
+        .query(TABLE, columns: [ID, COURSE, STARTTIME, ENDTIME, DAY], orderBy: "$DAY, $STARTTIME, $ENDTIME");
     //List<Map> maps = await dbClient.rawQuery("SELECT * FROM $TABLE");
     List<Period> periods = [];
     if (maps.length > 0) {

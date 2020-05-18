@@ -1,7 +1,9 @@
+import 'package:Sapptest/mainPage.dart';
 import 'package:Sapptest/userdata.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'period.dart';
-import 'time.dart';
+
 
 class PeriodSlot extends StatelessWidget {
   final int index;
@@ -47,26 +49,66 @@ class PeriodSlot extends StatelessWidget {
   }
 }
 
-class PeriodList extends StatelessWidget {
+class PeriodList extends StatefulWidget {
   final int day;
   const PeriodList({
-    Key key, this.day,
+    Key key,
+    this.day,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  _PeriodListState createState() => _PeriodListState();
+}
+
+class _PeriodListState extends State<PeriodList> {
+  ScrollController _controller;
+  List<Period> currentPeriods;
+
+
+  @override
+  void initState() {
+
+    currentPeriods =  allFromDay((widget.day - 1) % 7);
     
-        final List<Period> currentPeriods = allFromDay((day-1)%7);
+    
+    _controller = ScrollController()
+      ..addListener(() {
+        upDirection =
+            _controller.position.userScrollDirection == ScrollDirection.forward;
+
+        // makes sure we don't call setState too much, but only when it is needed
+        if (upDirection != flag) {
+            flag = upDirection;
+            scrollCheck.value = upDirection;
+        }
+      });
+    super.initState();
+  }
+  @override
+  Widget build(BuildContext context) {
+     currentPeriods =  allFromDay((widget.day - 1) % 7);
 
     return ListView.builder(
-            itemBuilder: (context, index) {
-              return index == 0 ? Time() :  currentPeriods.isEmpty ? EmptyMessage() : PeriodSlot(
-                period: currentPeriods[index-1],
-                index: index,
-              );
-            },
-            itemCount: currentPeriods.isEmpty ? 2 : currentPeriods.length + 1,
-          );
+      controller: _controller,
+      itemBuilder: (context, index) {
+        return index == 0
+            ? 
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(getDayOfTheWeek((widget.day - 1) % 7), style: TextStyle(fontSize: 30),),
+                    ),
+                  )
+               
+            : currentPeriods.isEmpty
+                ? EmptyMessage()
+                : PeriodSlot(
+                    period: currentPeriods[index - 1],
+                    index: index,
+                  );
+      },
+      itemCount: currentPeriods.isEmpty ? 2 : currentPeriods.length + 1,
+    );
   }
 }
 
@@ -78,13 +120,13 @@ class EmptyMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-            alignment: Alignment.topCenter,
-            child: Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Text(
-      'Seems Empty, Try Adding Some Periods!',
-    ),
-            ),
-          );
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          'Seems Empty, Try Adding Some Periods!',
+        ),
+      ),
+    );
   }
 }

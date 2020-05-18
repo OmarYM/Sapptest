@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:Sapptest/dbhelper.dart';
 import 'package:Sapptest/period.dart';
 import 'course.dart';
@@ -45,6 +47,12 @@ List<Period> allFromCourse(String title) {
 
   return result;
 }
+
+bool upDirection, flag ;
+
+Brightness brightness;
+
+
 
  String getDayOfTheWeek(int day) {
     switch (day) {

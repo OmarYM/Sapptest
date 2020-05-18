@@ -2,6 +2,7 @@ import 'package:Sapptest/course.dart';
 import 'package:Sapptest/period.dart';
 import 'package:Sapptest/userdata.dart';
 import 'package:flutter/material.dart';
+import 'courseinput.dart';
 import 'dayformfield.dart';
 import 'timeformfield.dart';
 
@@ -17,6 +18,7 @@ final _textFormKey = GlobalKey<FormFieldState>();
 final _courseFormKey = GlobalKey<FormFieldState>();
 
 bool x = false;
+Course _course;
 
 class PeriodInput extends StatefulWidget {
   PeriodInput({Key key}) : super(key: key);
@@ -35,15 +37,11 @@ class PeriodInput extends StatefulWidget {
 }
 
 class _PeriodInputState extends State<PeriodInput> {
-  var course;
-
   @override
   void initState() {
     setState(() {
-      course = courses.isNotEmpty ? courses[0] : null;
+      _course = courses.isNotEmpty ? courses[0] : null;
     });
-
-
 
     super.initState();
   }
@@ -72,152 +70,212 @@ class _PeriodInputState extends State<PeriodInput> {
               currentFocus.unfocus();
             }
           },
-          child: ListView(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: DropdownButtonFormField(
-                    key: _courseFormKey,
-                    value: course != null ? course : null,
-                    items:
-                        courses.map<DropdownMenuItem<Course>>((Course value) {
-                      return DropdownMenuItem<Course>(
-                        value: value , 
-                        child: Text(value.title),
-                      );
-                    }).toList(),
-                    onChanged: (newValue) {
-                      setState(() {
-                        course = newValue;
-                      });
-                    }),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    top: 15.0, bottom: 15, left: 25, right: 25),
-                child: TextFormField(
-                  key: _textFormKey,
-                  decoration: const InputDecoration(
-                    hintText: 'Enter Period Title',
-                  ),
-                  validator: (value) {
-                    if (value.isEmpty) {
-                      return 'Please Enter A Title';
-                    }
-                    return null;
-                  },
-                ),
-              ),
-              Center(
-                child: DayFormField(
-                  key: _dayFormKey,
-                  context: context,
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Please Select One Day';
-                    } else {
-                      return null;
-                    }
-                  },
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(15),
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 20.0),
-                  child: Text(
-                    'Start Time',
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 30.0),
-                  child: Text(
-                    'End Time',
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-              ]),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: TimeFormField(
-                      context: context,
-                      key: _startFormKey,
-                      validator: (value) {
-                        if (value == null ||
-                            _endFormKey.currentState.value == null) {
-                          return 'Please Enter a Time';
-                        } else if (_endFormKey != null &&
-                            _endFormKey.currentState.value.hour * 10 +
-                                    _endFormKey.currentState.value.minute <
-                                value.hour * 10 + value.minute) {
-                          return 'Start Time Must Be Earlier Than End Time';
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                  ),
-                ]),
-                Column(children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: TimeFormField(
-                      context: context,
-                      key: _endFormKey,
-                    ),
-                  ),
-                ]),
-              ]),
-              _startFormKey.currentState != null
-                  ? _startFormKey.currentState.hasError
-                      ? Center(
-                          child: Text(
-                            _startFormKey.currentState.errorText,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.red),
-                          ),
-                        )
-                      : Container()
-                  : Container(),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                child: Center(
-                  child: RaisedButton(
-                    onPressed: () {
-                      // Validate will return true if the form is valid, or false if
-                      // the form is invalid.
-                      if (_formKey.currentState.validate()) {
-                        // Process data.
-                        var title = _textFormKey.currentState.value;
-                        var startTime = _startFormKey.currentState.value;
-                        var endTime = _endFormKey.currentState.value;
-                        var day = _dayFormKey.currentState.value;
-                        var course = _courseFormKey.currentState.value;
-
-                        Period period =
-                            Period(startTime, endTime, title, day, course);
-
-                        dbperiods.save(period);
-
-                        Navigator.pop(context);
-                      } else {
-                        setState(() {
-                        });
-                      }
-                    },
-                    child: Text('Submit'),
-                  ),
-                ),
-              ),
-            ],
-          ),
+          child: PeriodInputs(),
         ),
       ),
+    );
+  }
+}
+
+class PeriodInputs extends StatefulWidget {
+  const PeriodInputs({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _PeriodInputsState createState() => _PeriodInputsState();
+}
+
+class _PeriodInputsState extends State<PeriodInputs> {
+  void createSnackBar(BuildContext context) {
+    final snackBar = new SnackBar(
+      behavior: SnackBarBehavior.fixed,
+        content: new Text('Seems like there are no courses.'),
+        action: SnackBarAction(
+            label: 'Add A Course',
+            onPressed: () => navigateToCoursePage(context)),
+        );
+
+    // Find the Scaffold in the Widget tree and use it to show a SnackBar!
+    if (courses.isEmpty) {
+      Scaffold.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  Future navigateToCoursePage(context) async {
+    Navigator.push(
+            context, MaterialPageRoute(builder: (context) => CourseInput()))
+        .then((value) {
+          refreshList();
+        } );
+  }
+
+  refreshList() {
+      dbcourses.getCourses().then((value) {
+        if (value.isNotEmpty) {
+          setState(() {
+            courses = value;
+             _course = courses.isEmpty ? null : courses[0];
+          });       
+        }
+      });
+  }
+
+  @override
+  void initState() {
+    Future.delayed(Duration(seconds: 1)).then((_) => createSnackBar(context));
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: DropdownButtonFormField(
+            key: _courseFormKey,
+            value: _course != null ? _course : null,
+            items: courses.map<DropdownMenuItem<Course>>((Course value) {
+              return DropdownMenuItem<Course>(
+                value: value,
+                child: Text(value.title),
+              );
+            }).toList(),
+            onChanged: (newValue) {
+              setState(() {
+                _course = newValue;
+              });
+            },
+            validator: (value) {
+              if (value == null) {
+                return 'You Have To Add A Course First';
+              }
+              return null;
+            },
+          ),
+        ),
+        Padding(
+          padding:
+              const EdgeInsets.only(top: 15.0, bottom: 15, left: 25, right: 25),
+          child: TextFormField(
+            key: _textFormKey,
+            decoration: const InputDecoration(
+              hintText: 'Enter Period Title',
+            ),
+            validator: (value) {
+              if (value.isEmpty) {
+                return 'Please Enter A Title';
+              }
+              return null;
+            },
+          ),
+        ),
+        Center(
+          child: DayFormField(
+            key: _dayFormKey,
+            context: context,
+            validator: (value) {
+              if (value == null) {
+                return 'Please Select One Day';
+              } else {
+                return null;
+              }
+            },
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.all(15),
+        ),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0),
+            child: Text(
+              'Start Time',
+              textAlign: TextAlign.left,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 30.0),
+            child: Text(
+              'End Time',
+              textAlign: TextAlign.left,
+            ),
+          ),
+        ]),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: TimeFormField(
+                context: context,
+                key: _startFormKey,
+                validator: (value) {
+                  if (value == null || _endFormKey.currentState.value == null) {
+                    return 'Please Enter a Time';
+                  } else if (_endFormKey != null &&
+                      _endFormKey.currentState.value.hour * 10 +
+                              _endFormKey.currentState.value.minute <
+                          value.hour * 10 + value.minute) {
+                    return 'Start Time Must Be Earlier Than End Time';
+                  } else {
+                    return null;
+                  }
+                },
+              ),
+            ),
+          ]),
+          Column(children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: TimeFormField(
+                context: context,
+                key: _endFormKey,
+              ),
+            ),
+          ]),
+        ]),
+        _startFormKey.currentState != null
+            ? _startFormKey.currentState.hasError
+                ? Center(
+                    child: Text(
+                      _startFormKey.currentState.errorText,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  )
+                : Container()
+            : Container(),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          child: Center(
+            child: RaisedButton(
+              onPressed: () {
+                // Validate will return true if the form is valid, or false if
+                // the form is invalid.
+                if (_formKey.currentState.validate()) {
+                  // Process data.
+                  var title = _textFormKey.currentState.value;
+                  var startTime = _startFormKey.currentState.value;
+                  var endTime = _endFormKey.currentState.value;
+                  var day = _dayFormKey.currentState.value;
+                  var course = _courseFormKey.currentState.value;
+
+                  Period period =
+                      Period(startTime, endTime, title, day, course);
+
+                  dbperiods.save(period);
+
+                  Navigator.pop(context);
+                } else {
+                  setState(() {});
+                }
+              },
+              child: Text('Submit'),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
