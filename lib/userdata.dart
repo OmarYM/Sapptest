@@ -59,7 +59,7 @@ void deleteCourse(Course course){
   periods.forEach((element) {
     if (course.title.toLowerCase().compareTo(element.course.title.toLowerCase()) == 0) {
       dbperiods.delete(element.id);
-      periods.remove(element);
+      //periods.remove(element);
       
     }   
   });

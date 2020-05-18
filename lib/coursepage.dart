@@ -357,8 +357,7 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                     children: [
                       Center(
                           child: Text(
-                        getDayOfTheWeek(widget.period.day) +
-                            widget.period.id.toString(),
+                        getDayOfTheWeek(widget.period.day),
                         textAlign: TextAlign.center,
                       )),
                       Row(

@@ -149,7 +149,7 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                     child: Container(
                         width: width * 0.6,
                         child: Text(
-                          widget.period.course.title + widget.period.id.toString(),
+                          widget.period.course.title,
                           textAlign: TextAlign.center,
                         )),
                   ),

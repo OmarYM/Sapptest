@@ -40,7 +40,7 @@ class _PeriodInputState extends State<PeriodInput> {
   @override
   void initState() {
     setState(() {
-      _course = courses.isNotEmpty ? courses[0] : null;
+      _course = null;
     });
 
     super.initState();
@@ -156,7 +156,7 @@ class _PeriodInputsState extends State<PeriodInputs> {
             },
             validator: (value) {
               if (value == null) {
-                return 'You Have To Add A Course First';
+                return 'You Have To Choose A Course First!';
               }
               return null;
             },
