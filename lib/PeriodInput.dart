@@ -132,15 +132,21 @@ class _PeriodInputsState extends State<PeriodInputs> {
     return ListView(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.only(top: 15.0, left: 15 , right: 15),
+          child: Text('Course:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15.0, left: 15 , right: 15),
           child: DropdownButtonFormField(
             key: _courseFormKey,
             isExpanded: true,
+            hint: Text("Select"),
             value: _course != null ? _course : null,
             items: courses.map<DropdownMenuItem<Course>>((Course value) {
               return DropdownMenuItem<Course>(
                 value: value,
-                child: Text(value.title),
+               
+                child: Container(child: Text(value.title, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis,)),
               );
             }).toList(),
             onChanged: (newValue) {
@@ -157,16 +163,19 @@ class _PeriodInputsState extends State<PeriodInputs> {
           ),
         ),
         Padding(
-          padding:
-              const EdgeInsets.only(top: 15.0, bottom: 15, left: 25, right: 25),
+          padding: const EdgeInsets.only(top: 15.0, left: 15 , right: 15),
+          child: Text('Period Type:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15.0, left: 15 , right: 15),
           child: TextFormField(
             key: _textFormKey,
             decoration: const InputDecoration(
-              hintText: 'Enter Period Title',
+              hintText: 'Lecture, Lab, etc',
             ),
             validator: (value) {
               if (value.isEmpty) {
-                return 'Please Enter A Title';
+                return 'Please Enter A Type';
               }
               return null;
             },

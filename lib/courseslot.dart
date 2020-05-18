@@ -37,6 +37,7 @@ class CourseSlot extends StatelessWidget {
             child: Text(
           course.title,
           textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 20),
         )),
         subtitle: course.courseCode.isNotEmpty
             ? Column(

@@ -19,14 +19,13 @@ class _CoursePageState extends State<CoursePage> {
   List<Period> coursePeriods;
   var notChecked;
   var passedthrough;
-  List<bool> isnext;
+  int isnext;
 
   @override
   void initState() {
     coursePeriods = allFromCourse(widget.course.title);
-    isnext = List.filled(coursePeriods.length, false);
+    isnext = -1;
     notChecked = true;
-
     passthrough();
 
     super.initState();
@@ -34,7 +33,7 @@ class _CoursePageState extends State<CoursePage> {
 
   double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
 
-  bool isNext(int index) {
+  int isNext(int index) {
     if (notChecked) {
       if (coursePeriods[index].day + 1 == DateTime.now().weekday) {
         if (index == 0) {
@@ -42,7 +41,6 @@ class _CoursePageState extends State<CoursePage> {
               toDouble(TimeOfDay.now())) {
             notChecked = false;
 
-            return true;
           }
         } else {
           if (toDouble(coursePeriods[index].startTime) >
@@ -50,34 +48,36 @@ class _CoursePageState extends State<CoursePage> {
               toDouble(coursePeriods[index - 1].startTime) <
                   toDouble(TimeOfDay.now())) {
             notChecked = false;
-            print(2);
-            return true;
+ 
+            return index;
           }
         }
       } else if (coursePeriods[index].day + 1 > DateTime.now().weekday) {
         notChecked = false;
 
-        return true;
-      } else if (coursePeriods[index].day + 1 < DateTime.now().weekday &&
+        return index;
+      } else if (coursePeriods[index].day + 1 <= DateTime.now().weekday &&
           passedthrough) {
         notChecked = false;
 
-        return true;
-      }
+        return index;
+      } 
     }
-    return false;
+    return -1;
   }
 
   void passthrough() {
     passedthrough = false;
     for (var i = 0; i < coursePeriods.length; i++) {
-      isnext[i] = isNext(i);
+      var result = isNext(i);
+      isnext = result == -1 ? isnext : result;
     }
 
     passedthrough = true;
     if (notChecked) {
       for (var i = 0; i < coursePeriods.length; i++) {
-        isnext[i] = isNext(i);
+        var result = isNext(i);
+        isnext = result == -1 ? isnext : result;
       }
     }
   }
@@ -92,9 +92,10 @@ class _CoursePageState extends State<CoursePage> {
   @override
   Widget build(BuildContext context) {
     coursePeriods = allFromCourse(widget.course.title);
-    notChecked = true;
-    isnext = List.filled(coursePeriods.length, false);
-    passthrough();
+
+    if(isnext >= coursePeriods.length){
+      isnext = 0;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -144,28 +145,31 @@ class _CoursePageState extends State<CoursePage> {
         key: new Key('huh'),
         itemBuilder: (context, index) {
           return index == 0
-              ? Hero(
-                  tag: 'coursetile' + widget.index.toString(),
-                  child: Material(
-                    type: MaterialType.transparency,
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Center(
-                        child: Text(
-                          widget.course.title,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 30, fontWeight: FontWeight.bold),
+              ? Column(
+                              children: [Hero(
+                    tag: 'coursetile' + widget.index.toString(),
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: Center(
+                          child: Text(
+                            widget.course.title,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold),
+                          ),
                         ),
                       ),
-                    ),
-                  ))
+                    )),
+                    Divider(thickness: 2,)]
+              )
               : coursePeriods.isEmpty
                   ? EmptyMessage()
                   : PeriodSlot(
-                      index: index-1,
+                      index: index - 1,
                       period: coursePeriods[index - 1],
-                      isNext: isnext[index - 1],
+                      isNext: isnext == index - 1,
                       function: callback,
                     );
         },
@@ -304,14 +308,11 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                   trailing: IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {
-                        
-
                         setState(() {
                           dbperiods.delete(widget.period.id);
                           deleted = true;
                         });
                         widget.function(widget.period);
-
                       }),
                 ),
           AnimatedPositioned(
@@ -356,7 +357,8 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                     children: [
                       Center(
                           child: Text(
-                        getDayOfTheWeek(widget.period.day) + widget.period.id.toString(),
+                        getDayOfTheWeek(widget.period.day) +
+                            widget.period.id.toString(),
                         textAlign: TextAlign.center,
                       )),
                       Row(
@@ -381,6 +383,7 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                       ),
                       Divider(
                         height: 15,
+                        thickness: 2,
                       ),
                     ],
                   ),

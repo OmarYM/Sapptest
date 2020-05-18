@@ -185,6 +185,7 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                       ),
                       Divider(
                         height: 15,
+                        thickness: 2,
                       ),
                     ],
                   ),

@@ -116,7 +116,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     _scaffoldKey.currentState.openDrawer();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -143,8 +142,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         ),
         drawer: Drawer(
           child: Scaffold(
-            appBar: AppBar(leading: Container(),
-            title: Align(alignment: Alignment.centerLeft, child: Text('Welcome')),),
+            appBar: AppBar(
+              leading: Container(
+                width: 100,
+                child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Text(
+                      'Welcome',
+                      style: TextStyle(fontSize: 20),
+                    )),
+              ),
+            ),
             body: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
@@ -157,7 +165,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       },
                       child: Text('Add A Period')),
                 )),
-                Divider(height: 5),
+                Divider(
+                  height: 0,
+                  thickness: 2,
+                ),
                 Center(
                     child: SizedBox(
                   width: double.infinity,
@@ -167,7 +178,10 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       },
                       child: Text('Add A Course')),
                 )),
-                Divider(height: 5),
+                Divider(
+                  height: 0,
+                  thickness: 2,
+                ),
                 Center(
                     child: SizedBox(
                   width: double.infinity,
@@ -177,9 +191,16 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       },
                       child: Text('Settings')),
                 )),
-                Divider(height: 5),
+                Divider(
+                  height: 0,
+                  thickness: 2,
+                ),
                 Expanded(
                   child: Container(),
+                ),
+                Divider(
+                  height: 0,
+                  thickness: 2,
                 ),
                 Center(
                     child: SizedBox(
@@ -190,7 +211,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                       },
                       child: Text('About')),
                 )),
-                Divider(height: 5),
               ],
             ),
           ),
@@ -219,7 +239,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ),
             Column(children: [
               Expanded(
-                child: CourseList(function: refreshLists,),
+                child: CourseList(
+                  function: refreshLists,
+                ),
               )
             ]),
           ],
