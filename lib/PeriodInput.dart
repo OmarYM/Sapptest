@@ -90,11 +90,11 @@ class _PeriodInputsState extends State<PeriodInputs> {
   void createSnackBar(BuildContext context) {
     final snackBar = new SnackBar(
       behavior: SnackBarBehavior.fixed,
-        content: new Text('Seems like there are no courses.'),
-        action: SnackBarAction(
-            label: 'Add A Course',
-            onPressed: () => navigateToCoursePage(context)),
-        );
+      content: new Text('Seems like there are no courses.'),
+      action: SnackBarAction(
+          label: 'Add A Course',
+          onPressed: () => navigateToCoursePage(context)),
+    );
 
     // Find the Scaffold in the Widget tree and use it to show a SnackBar!
     if (courses.isEmpty) {
@@ -106,19 +106,19 @@ class _PeriodInputsState extends State<PeriodInputs> {
     Navigator.push(
             context, MaterialPageRoute(builder: (context) => CourseInput()))
         .then((value) {
-          refreshList();
-        } );
+      refreshList();
+    });
   }
 
   refreshList() {
-      dbcourses.getCourses().then((value) {
-        if (value.isNotEmpty) {
-          setState(() {
-            courses = value;
-             _course = courses.isEmpty ? null : courses[0];
-          });       
-        }
-      });
+    dbcourses.getCourses().then((value) {
+      if (value.isNotEmpty) {
+        setState(() {
+          courses = value;
+          _course = courses.isEmpty ? null : courses[0];
+        });
+      }
+    });
   }
 
   @override
@@ -132,14 +132,21 @@ class _PeriodInputsState extends State<PeriodInputs> {
     return ListView(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.only(top: 15.0, left: 15 , right: 15),
+          child: Text('Course:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15.0, left: 15 , right: 15),
           child: DropdownButtonFormField(
             key: _courseFormKey,
+            isExpanded: true,
+            hint: Text("Select"),
             value: _course != null ? _course : null,
             items: courses.map<DropdownMenuItem<Course>>((Course value) {
               return DropdownMenuItem<Course>(
                 value: value,
-                child: Text(value.title),
+               
+                child: Container(child: Text(value.title, textAlign: TextAlign.center, overflow: TextOverflow.ellipsis,)),
               );
             }).toList(),
             onChanged: (newValue) {
@@ -156,16 +163,19 @@ class _PeriodInputsState extends State<PeriodInputs> {
           ),
         ),
         Padding(
-          padding:
-              const EdgeInsets.only(top: 15.0, bottom: 15, left: 25, right: 25),
+          padding: const EdgeInsets.only(top: 15.0, left: 15 , right: 15),
+          child: Text('Period Type:', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15.0, left: 15 , right: 15),
           child: TextFormField(
             key: _textFormKey,
             decoration: const InputDecoration(
-              hintText: 'Enter Period Title',
+              hintText: 'Lecture, Lab, etc',
             ),
             validator: (value) {
               if (value.isEmpty) {
-                return 'Please Enter A Title';
+                return 'Please Enter A Type';
               }
               return null;
             },
@@ -176,7 +186,7 @@ class _PeriodInputsState extends State<PeriodInputs> {
             key: _dayFormKey,
             context: context,
             validator: (value) {
-              if (value == null) {
+              if (value == null || value.isEmpty) {
                 return 'Please Select One Day';
               } else {
                 return null;
@@ -214,9 +224,9 @@ class _PeriodInputsState extends State<PeriodInputs> {
                   if (value == null || _endFormKey.currentState.value == null) {
                     return 'Please Enter a Time';
                   } else if (_endFormKey != null &&
-                      _endFormKey.currentState.value.hour * 10 +
+                      _endFormKey.currentState.value.hour * 100 +
                               _endFormKey.currentState.value.minute <
-                          value.hour * 10 + value.minute) {
+                          value.hour * 100 + value.minute) {
                     return 'Start Time Must Be Earlier Than End Time';
                   } else {
                     return null;
@@ -258,13 +268,18 @@ class _PeriodInputsState extends State<PeriodInputs> {
                   var title = _textFormKey.currentState.value;
                   var startTime = _startFormKey.currentState.value;
                   var endTime = _endFormKey.currentState.value;
-                  var day = _dayFormKey.currentState.value;
                   var course = _courseFormKey.currentState.value;
 
-                  Period period =
-                      Period(startTime, endTime, title, day, course);
+                  _dayFormKey.currentState.value.forEach((day) {
+                    Period period =
+                        Period(id, startTime, endTime, title, day, course);
 
-                  dbperiods.save(period);
+                    dbperiods.save(period);
+
+                    id++;
+
+                    prefs.saveId(id);
+                  });
 
                   Navigator.pop(context);
                 } else {
