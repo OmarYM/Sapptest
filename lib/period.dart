@@ -1,107 +1,127 @@
-import 'dart:convert';
-
-import 'package:Sapptest/course.dart';
+import 'package:Sapptest/userdata.dart';
 import 'package:flutter/material.dart';
 
-class Period implements Comparable{
+class Period implements Comparable {
   TimeOfDay startTime = TimeOfDay(hour: 0, minute: 0);
   TimeOfDay endTime = TimeOfDay(hour: 0, minute: 0);
-  Course course = Course(title: '') ;
+  String courseId;
   int day;
-  int id;
+  String id;
+  int notification = -1;
+  int notificationId;
   String title;
 
-  Period(this.id, this.startTime, this.endTime, this.title, this.day, this.course);
+  Period(this.id, this.startTime, this.endTime, this.title, this.day,
+      this.courseId, this.notification, this.notificationId);
+
+  int get getPeriodLength {
+    var result = toInt(endTime) - toInt(startTime);
+
+    return result;
+  }
+
+  String get courseTitle {
+
+    String result;
+
+    courses.forEach((element) {
+      if (element.id == courseId) {
+        result = element.title;
+      }
+    });
+
+    return result ?? '';
+  }
 
   Period.fromMap(Map<String, dynamic> json)
       : startTime = fromInt(json['startTime']),
         endTime = fromInt(json['endTime']),
         day = json['day'],
-        course = Course.fromMap(jsonDecode(json['course'])),
+        courseId = json['courseId'],
         id = json['id'],
-        title = json['title'];
+        title = json['title'],
+        notification = json['notification'],
+        notificationId = json['notificationId'];
 
   Map<String, dynamic> toMap() => {
         'startTime': toInt(startTime),
         'endTime': toInt(endTime),
         'day': day,
-        'course': jsonEncode(course.toMap()),
-        'id' : id,
+        'courseId': courseId,
+        'id': id,
         'title': title,
+        'notification': notification,
+        'notificationId': notificationId
       };
 
+  int toInt(TimeOfDay t) {
+    return t.hour * 60 + t.minute;
+  }
 
-      int toInt(TimeOfDay t){
-        return t.hour*100+t.minute;
-      }
+  static TimeOfDay fromInt(int i) {
+    int hour;
+    int minute;
 
-      static TimeOfDay fromInt(int i){
+    if (i < 0) {
+      int temp = i + 23 * 60 + 59;
 
-        int hour = i~/100;
-        int minute = i%100;
-        
-        return TimeOfDay(hour: hour, minute: minute);
-      }
+      hour = temp ~/ 60;
+      minute = temp % 60;
+    } else {
+      hour = i ~/ 60;
+      minute = i % 60;
+    }
 
-      @override
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
+  @override
   String toString() {
-
     var sstr = startTime.toString();
     var estr = endTime.toString();
     var dstr = day.toString();
-    var cstr = course.title;
-    
-    var result = "startTime: $sstr\nendTime: $estr\nday: $dstr\ncourse: $cstr\n";
+    var cstr = courseId.toString();
+
+    var result =
+        "startTime: $sstr\nendTime: $estr\nday: $dstr\ncourseId: $cstr\n";
     return result;
   }
 
   @override
-  int compareTo(other){
-
-
-    if(other == null || this == null){
+  int compareTo(other) {
+    if (other == null || this == null) {
       return null;
-    }
-
-     else if(this.day > other.day){
-       print(1);
+    } else if (this.day > other.day) {
+      print(1);
       return 1;
-
-    } else if(this.day < other.day){
+    } else if (this.day < other.day) {
       print(2);
 
       return -1;
-    
     } else {
-      if(toInt(this.startTime) > toInt(this.startTime) ){
+      if (toInt(this.startTime) > toInt(this.startTime)) {
         print(3);
 
         return 1;
-
-      } else if(toInt(this.startTime) < toInt(this.startTime)){
+      } else if (toInt(this.startTime) < toInt(this.startTime)) {
         print(4);
 
         return -1;
-
       } else {
-        if(toInt(this.endTime) > toInt(this.endTime) ){
+        if (toInt(this.endTime) > toInt(this.endTime)) {
           print(5);
 
-        return 1;
+          return 1;
+        } else if (toInt(this.endTime) < toInt(this.endTime)) {
+          print(6);
 
-      } else if(toInt(this.endTime) < toInt(this.endTime)){
-        print(6);
+          return -1;
+        } else {
+          print(7);
 
-        return -1;
-
-      } else{
-        print(7);
-
-        return 0;
-      }
-
+          return 0;
+        }
       }
     }
-
   }
 }

@@ -11,10 +11,12 @@ class DBHelperPeriod {
   static Database _db;
   static const String ID = 'id';
   static const String TITLE = 'title';
-  static const String COURSE = 'course';
+  static const String COURSEID = 'courseId';
   static const String STARTTIME = 'startTime';
   static const String ENDTIME = 'endTime';
   static const String DAY = 'day';
+  static const String NOTIFICATION = 'notification';
+    static const String NOTIFICATIONID = 'notificationId';
   static const String TABLE = 'periods';
   static const String DB_NAME = 'period1.db';
 
@@ -34,8 +36,8 @@ class DBHelperPeriod {
   }
 
   _onCreate(Database db, int version) async {
-    await db.execute(
-        "CREATE TABLE $TABLE ($ID INTEGER PRIMARY KEY, $TITLE TEXT, $COURSE TEXT, $STARTTIME INTEGER, $ENDTIME INTEGER, $DAY INTEGER)");
+        await db.execute(
+            "CREATE TABLE $TABLE ($ID TEXT PRIMARY KEY, $TITLE TEXT, $COURSEID TEXT, $STARTTIME INTEGER, $ENDTIME INTEGER, $DAY INTEGER, $NOTIFICATION INTEGER, $NOTIFICATIONID INTEGER)");
   }
 
   deleteTable(){
@@ -43,7 +45,7 @@ class DBHelperPeriod {
   }
 
   createTable(){
-    db.then((value) => value.execute("CREATE TABLE $TABLE ($ID INTEGER PRIMARY KEY, $TITLE TEXT, $COURSE TEXT, $STARTTIME INTEGER, $ENDTIME INTEGER, $DAY INTEGER)"));
+    db.then((value) => value.execute("CREATE TABLE $TABLE ($ID TEXT PRIMARY KEY, $TITLE TEXT, $COURSEID TEXT, $STARTTIME INTEGER, $ENDTIME INTEGER, $DAY INTEGER, $NOTIFICATION INTEGER, $NOTIFICATIONID INTEGER)"));
   }
 
   Future<Period> save(Period period) async {
@@ -61,7 +63,7 @@ class DBHelperPeriod {
   Future<List<Period>> getPeriods() async {
     var dbClient = await db;
     List<Map> maps = await dbClient
-        .query(TABLE, columns: [ID, TITLE, COURSE, STARTTIME, ENDTIME, DAY], orderBy: "$DAY, $STARTTIME, $ENDTIME");
+        .query(TABLE, columns: [ID, TITLE, COURSEID, STARTTIME, ENDTIME, DAY, NOTIFICATION, NOTIFICATIONID], orderBy: "$DAY, $STARTTIME, $ENDTIME");
     //List<Map> maps = await dbClient.rawQuery("SELECT * FROM $TABLE");
     List<Period> periods = [];
     if (maps.length > 0) {
@@ -72,7 +74,7 @@ class DBHelperPeriod {
     return periods;
   }
 
-  Future<int> delete(int id) async {
+  Future<int> delete(String id) async {
     var dbClient = await db;
     return await dbClient.delete(TABLE, where: '$ID = ?', whereArgs: [id]);
   }
@@ -82,15 +84,10 @@ class DBHelperPeriod {
     var map = period.toMap();
     return await dbClient.update(TABLE, map,
         where:
-            '$ID = ? AND $TITLE AND $COURSE = ? AND $STARTTIME = ? AND $ENDTIME = ? AND $DAY = ?',
+            '$ID = ?',
 
         whereArgs: [
-          period.title,
           period.id,
-          map['course'],
-          map['startTime'],
-          map['endTime'],
-          map['day']
         ]);
   }
 
@@ -103,7 +100,8 @@ class DBHelperPeriod {
 
 class DBHelperCourse {
   static Database _db;
-  static const String ID = 'title';
+  static const String ID = 'id';
+  static const String TITLE = 'title';
   static const String COURSECODE = 'courseCode';
   static const String DESCRIPTION = 'description';
   static const String TABLE = 'courses';
@@ -126,7 +124,7 @@ class DBHelperCourse {
 
   _onCreate(Database db, int version) async {
     await db.execute(
-        "CREATE TABLE $TABLE ($ID TEXT PRIMARY KEY, $COURSECODE TEXT, $DESCRIPTION TEXT)");
+        "CREATE TABLE $TABLE ($ID TEXT PRIMARY KEY, $TITLE TEXT, $COURSECODE TEXT, $DESCRIPTION TEXT)");
   }
 
   Future<Course> save(Course course) async {
@@ -146,13 +144,13 @@ class DBHelperCourse {
   }
 
   createTable(){
-    db.then((value) => value.execute("CREATE TABLE $TABLE ($ID TEXT PRIMARY KEY, $COURSECODE TEXT, $DESCRIPTION TEXT)"));
+    db.then((value) => value.execute("CREATE TABLE $TABLE ($ID TEXT PRIMARY KEY, $TITLE TEXT, $COURSECODE TEXT, $DESCRIPTION TEXT)"));
   }
 
   Future<List<Course>> getCourses() async {
     var dbClient = await db;
     List<Map> maps = await dbClient
-        .query(TABLE, columns: [ID, COURSECODE, DESCRIPTION]);
+        .query(TABLE, columns: [ID, TITLE, COURSECODE, DESCRIPTION]);
     //List<Map> maps = await dbClient.rawQuery("SELECT * FROM $TABLE");
     List<Course> courses = [];
     if (maps.length > 0) {
@@ -173,12 +171,10 @@ class DBHelperCourse {
     var map = course.toMap();
     return await dbClient.update(TABLE, map,
         where:
-            '$ID = ? AND $COURSECODE = ? AND $DESCRIPTION = ?',
+            '$ID = ?',
 
         whereArgs: [
-          course.title,
-          map['courseCode'],
-          map['description']
+          course.id,
         ]);
   }
 

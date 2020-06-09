@@ -1,19 +1,24 @@
+import 'package:Sapptest/PeriodInput.dart';
 import 'package:Sapptest/mainPage.dart';
+import 'package:Sapptest/periodpage.dart';
 import 'package:Sapptest/userdata.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:page_transition/page_transition.dart';
 import 'period.dart';
 
 class PeriodSlot extends StatefulWidget {
   final int index;
   final Period period;
   final bool isNext;
+  final Function refresh;
 
   PeriodSlot({
     Key key,
     @required this.period,
     this.index,
     this.isNext,
+    this.refresh,
   }) : super(key: key);
 
   @override
@@ -23,6 +28,24 @@ class PeriodSlot extends StatefulWidget {
 class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
   bool selected;
   bool deleted;
+
+  Future navigateToPeriodPage(context) async {
+    Navigator.push(
+            context,
+            PageTransition(
+                child: PeriodInput(
+                  period: widget.period,
+                ),
+                type: PageTransitionType.upToDown,
+                curve: Curves.easeInOut,
+                duration: Duration(milliseconds: 200)))
+        .then((value) {
+      widget.refresh();
+      setState(() {
+        selected = false;
+      });
+    });
+  }
 
   @override
   void initState() {
@@ -35,11 +58,74 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     //print(index.toString());
+    var times = Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            child: Text(
+              widget.period.startTime.format(context),
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            widget.period.endTime.format(context),
+            textAlign: TextAlign.center,
+          ),
+        )
+      ],
+    );
+
+    var periodTitle = Container(
+      width: width * 0.6,
+      child: Column(
+        children: [
+          Center(
+              child: Text(
+            widget.period.title,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headline4.copyWith(
+                  fontSize: 15,
+                ),
+          )),
+          times,
+        ],
+      ),
+    );
+
+    var courseTitle = Column(children: [
+      Center(
+        child: Padding(
+            padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+            child: Container(
+              width: widget.isNext ? width * 0.7 : width,
+              child: Center(
+                  child: Text(
+                widget.period.courseTitle,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline6.copyWith(
+                      fontSize: 20,
+                    ),
+              )),
+            )),
+      ),
+      periodTitle,
+      Divider(
+        height: 15,
+        thickness: 2,
+      ),
+    ]);
+
     return AnimatedSize(
       curve: Curves.bounceOut,
       vsync: this,
       duration: Duration(milliseconds: 400),
       child: Container(
+        color: Colors.red[850],
         height: deleted ? 0 : null,
         width: deleted ? 0 : null,
         child: Stack(children: [
@@ -57,79 +143,73 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                 });
               },
               leading: widget.isNext
-                  ? Icon(
-                      Icons.play_arrow,
-                      color: Theme.of(context).accentColor,
+                  ? Container(
+                      width: 20,
+                      child: Icon(
+                        Icons.play_arrow,
+                        color: Theme.of(context).accentColor,
+                      ),
                     )
                   : null,
-              title: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Center(
-                      child: Text(
-                    widget.period.course.title,
-                    textAlign: TextAlign.center,
-                  )),
-                ),
-              ),
-              subtitle: Column(
-                children: [
-                  Center(
-                      child: Text(
-                    widget.period.title,
-                    textAlign: TextAlign.center,
-                  )),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          widget.period.startTime.format(context),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          widget.period.endTime.format(context),
-                          textAlign: TextAlign.center,
-                        ),
-                      )
-                    ],
-                  ),
-                  Divider(
-                    height: 15,
-                  ),
-                ],
-              ),
+              title: courseTitle,
             ),
           ),
           deleted
               ? Container()
-              : ListTile(
-                  trailing: IconButton(
-                      icon: Icon(Icons.delete),
-                      onPressed: () {
-                        setState(() {
-                          deleted = true;
-                          periods.remove(widget.period);
-                          dbperiods.delete(widget.period.id);
-                        });
-                      }),
-                ),
+
+              : Positioned(
+                //left: double.infinity,
+                right: 0,
+                              child: Container(
+                                color: Colors.red[800],
+                                padding: EdgeInsets.only(left: 25.0),
+                                width: width*0.4,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 20.0),
+                          child: IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                  navigateToPeriodPage(context);
+                              }),
+                        ),
+                      ),
+                      
+                      Flexible(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                  setState(() {
+                                    deleted = true;
+                                    periods.remove(widget.period);
+                                    dbperiods.delete(widget.period.id);
+                                  });
+                              }),
+                        ),
+                      ),
+                    ],
+                  ),
+                              ),
+              ),
+
+
           AnimatedPositioned(
-            right: selected ? width * 0.2 : 0,
+            right: selected ? width * 0.125 : 0,
             //top: 50,
-            duration: Duration(milliseconds: 500),
+            duration: Duration(milliseconds: 300),
             curve: Curves.bounceOut,
             child: AnimatedContainer(
               curve: Curves.bounceOut,
               width: width,
-              color:
-                  MediaQuery.of(context).platformBrightness == Brightness.light
-                      ? Colors.grey[50]
-                      : Colors.grey[850],
+              color: Colors.grey[850],//MediaQuery.of(context).platformBrightness == Brightness.light ? Colors.grey[50] : Colors.grey[850],
               duration: Duration(milliseconds: 500),
               child: ListTile(
                 //contentPadding: EdgeInsets.only(left: width*0.2),
@@ -143,53 +223,7 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                     selected = false;
                   });
                 },
-                title: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Container(
-                        width: width * 0.6,
-                        child: Text(
-                          widget.period.course.title,
-                          textAlign: TextAlign.center,
-                        )),
-                  ),
-                ),
-                subtitle: Container(
-                  width: width * 0.6,
-                  child: Column(
-                    children: [
-                      Center(
-                          child: Text(
-                        widget.period.title,
-                        textAlign: TextAlign.center,
-                      )),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              widget.period.startTime.format(context),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Text('-'),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              widget.period.endTime.format(context),
-                              textAlign: TextAlign.center,
-                            ),
-                          )
-                        ],
-                      ),
-                      Divider(
-                        height: 15,
-                        thickness: 2,
-                      ),
-                    ],
-                  ),
-                ),
+                title: Hero(tag: widget.period.id, child: courseTitle),
               ),
             ),
           ),
@@ -214,9 +248,12 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
 
 class PeriodList extends StatefulWidget {
   final int day;
+  final Function refresh;
+
   const PeriodList({
     Key key,
     this.day,
+    this.refresh,
   }) : super(key: key);
 
   @override
@@ -289,6 +326,7 @@ class _PeriodListState extends State<PeriodList> {
                     period: currentPeriods[index - 1],
                     index: index,
                     isNext: isnext(index - 1),
+                    refresh: widget.refresh,
                   );
       },
       itemCount: currentPeriods.isEmpty ? 2 : currentPeriods.length + 1,

@@ -23,7 +23,7 @@ class _CoursePageState extends State<CoursePage> {
 
   @override
   void initState() {
-    coursePeriods = allFromCourse(widget.course.title);
+    coursePeriods = allFromCourse(widget.course.id);
     isnext = -1;
     notChecked = true;
     passthrough();
@@ -40,7 +40,6 @@ class _CoursePageState extends State<CoursePage> {
           if (toDouble(coursePeriods[0].startTime) >
               toDouble(TimeOfDay.now())) {
             notChecked = false;
-
           }
         } else {
           if (toDouble(coursePeriods[index].startTime) >
@@ -48,7 +47,7 @@ class _CoursePageState extends State<CoursePage> {
               toDouble(coursePeriods[index - 1].startTime) <
                   toDouble(TimeOfDay.now())) {
             notChecked = false;
- 
+
             return index;
           }
         }
@@ -61,7 +60,7 @@ class _CoursePageState extends State<CoursePage> {
         notChecked = false;
 
         return index;
-      } 
+      }
     }
     return -1;
   }
@@ -91,9 +90,9 @@ class _CoursePageState extends State<CoursePage> {
 
   @override
   Widget build(BuildContext context) {
-    coursePeriods = allFromCourse(widget.course.title);
+    coursePeriods = allFromCourse(widget.course.id);
 
-    if(isnext >= coursePeriods.length){
+    if (isnext >= coursePeriods.length) {
       isnext = 0;
     }
 
@@ -145,25 +144,29 @@ class _CoursePageState extends State<CoursePage> {
         key: new Key('huh'),
         itemBuilder: (context, index) {
           return index == 0
-              ? Column(
-                              children: [Hero(
-                    tag: 'coursetile' + widget.index.toString(),
-                    child: Material(
-                      type: MaterialType.transparency,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Center(
-                          child: Text(
-                            widget.course.title,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 30, fontWeight: FontWeight.bold),
+              ? Column(children: [
+                  Hero(
+                      tag: 'coursetile' + widget.index.toString(),
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Center(
+                            child: Container(
+                              child: Text(
+                                widget.course.title,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 30, fontWeight: FontWeight.bold),
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    )),
-                    Divider(thickness: 2,)]
-              )
+                      )),
+                  Divider(
+                    thickness: 2,
+                  )
+                ])
               : coursePeriods.isEmpty
                   ? EmptyMessage()
                   : PeriodSlot(
@@ -232,6 +235,55 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     //print(index.toString());
+    var title = Center(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Container(
+            width: width * 0.6,
+            child: Text(
+              widget.period.title,
+              textAlign: TextAlign.center,
+            )),
+      ),
+    );
+
+    var subtitle = Container(
+      width: width * 0.6,
+      child: Column(
+        children: [
+          Center(
+              child: Text(
+            getDayOfTheWeek(widget.period.day),
+            textAlign: TextAlign.center,
+          )),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  widget.period.startTime.format(context),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Text('-'),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  widget.period.endTime.format(context),
+                  textAlign: TextAlign.center,
+                ),
+              )
+            ],
+          ),
+          Divider(
+            height: 15,
+            thickness: 2,
+          ),
+        ],
+      ),
+    );
+
     return AnimatedSize(
       curve: Curves.bounceOut,
       vsync: this,
@@ -259,47 +311,9 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                       color: Theme.of(context).accentColor,
                     )
                   : null,
-              title: Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: Center(
-                      child: Text(
-                    widget.period.course.title,
-                    textAlign: TextAlign.center,
-                  )),
-                ),
-              ),
-              subtitle: Column(
-                children: [
-                  Center(
-                      child: Text(
-                    widget.period.title,
-                    textAlign: TextAlign.center,
-                  )),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          widget.period.startTime.format(context),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          widget.period.endTime.format(context),
-                          textAlign: TextAlign.center,
-                        ),
-                      )
-                    ],
-                  ),
-                  Divider(
-                    height: 15,
-                  ),
-                ],
-              ),
+              title: title,
+
+              subtitle: subtitle,
             ),
           ),
           deleted
@@ -340,53 +354,8 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                     selected = false;
                   });
                 },
-                title: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Container(
-                        width: width * 0.6,
-                        child: Text(
-                          widget.period.title,
-                          textAlign: TextAlign.center,
-                        )),
-                  ),
-                ),
-                subtitle: Container(
-                  width: width * 0.6,
-                  child: Column(
-                    children: [
-                      Center(
-                          child: Text(
-                        getDayOfTheWeek(widget.period.day),
-                        textAlign: TextAlign.center,
-                      )),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              widget.period.startTime.format(context),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          Text('-'),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              widget.period.endTime.format(context),
-                              textAlign: TextAlign.center,
-                            ),
-                          )
-                        ],
-                      ),
-                      Divider(
-                        height: 15,
-                        thickness: 2,
-                      ),
-                    ],
-                  ),
-                ),
+                title: title,
+                subtitle: subtitle,
               ),
             ),
           ),

@@ -34,6 +34,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   void initState() {
     prefs = SharedPref();
 
+    prefs.getId().then((value) => nid = value ?? 0);
+
     upDirection = true;
     flag = true;
     click = false;
@@ -53,8 +55,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     //dbcourses.createTable();
     //dbperiods.createTable();
 
-    prefs.getId().then((value) => id = value ?? 0);
-
     periods = [];
     courses = [];
 
@@ -66,6 +66,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   void refreshLists() {
+    
     dbperiods.getPeriods().then((value) {
       if (value != null) {
         setState(() {
@@ -80,6 +81,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         });
       }
     });
+
+    
   }
 
   Future navigateToSettingsPage(context) async {
@@ -92,21 +95,27 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
     });
   }
 
-  Future navigateToPeriodPage(context) async {
+  Future navigateToPeriodInputPage(context) async {
     Navigator.push(
             context,
             PageTransition(
-                child: PeriodInput(), type: PageTransitionType.leftToRight))
+                child: PeriodInput(),
+                type: PageTransitionType.upToDown,
+                curve: Curves.easeInOut,
+                duration: Duration(milliseconds: 200)))
         .then((value) {
       refreshLists();
     });
   }
 
-  Future navigateToCoursePage(context) async {
+  Future navigateToCourseInputPage(context) async {
     Navigator.push(
             context,
             PageTransition(
-                child: CourseInput(), type: PageTransitionType.leftToRight))
+                child: CourseInput(),
+                type: PageTransitionType.upToDown,
+                curve: Curves.easeInOut,
+                duration: Duration(milliseconds: 200)))
         .then((value) {
       refreshLists();
     });
@@ -119,27 +128,9 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 5,
       child: Scaffold(
         key: _scaffoldKey,
-        appBar: AppBar(
-          //title: Text('MainPage'),
-          leading: Container(),
-          actions: [
-            IconButton(
-                icon: Icon(Icons.dehaze),
-                onPressed: () {
-                  _openDrawer();
-                }),
-            Flexible(
-              fit: FlexFit.loose,
-              child: TabBar(tabs: [
-                Tab(icon: Icon(Icons.home)),
-                Tab(icon: Icon(Icons.school))
-              ]),
-            ),
-          ],
-        ),
         drawer: Drawer(
           child: Scaffold(
             appBar: AppBar(
@@ -161,7 +152,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   width: double.infinity,
                   child: FlatButton(
                       onPressed: () {
-                        navigateToPeriodPage(context);
+                        navigateToPeriodInputPage(context);
                       },
                       child: Text('Add A Period')),
                 )),
@@ -174,7 +165,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   width: double.infinity,
                   child: FlatButton(
                       onPressed: () {
-                        navigateToCoursePage(context);
+                        navigateToCourseInputPage(context);
                       },
                       child: Text('Add A Course')),
                 )),
@@ -215,105 +206,128 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ),
           ),
         ),
-        body: TabBarView(
+        body: Column(
           children: [
-            Column(
-              children: [
-                Column(
-                  children: [
-                    Time(),
-                    Divider(
-                      thickness: 3,
+            Expanded(
+              child: TabBarView(
+                children: [
+                  SafeArea(
+                    child: Column(
+                      children: [
+                        Column(
+                          children: [
+                            Time(),
+                            Divider(
+                              thickness: 3,
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: InfinityPageView(
+                              controller: page,
+                              itemCount: 7,
+                              itemBuilder: (context, index) {
+                                return PeriodList(day: today + index, refresh: refreshLists,);
+                              }),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                Expanded(
-                  child: InfinityPageView(
-                      controller: page,
-                      itemCount: 7,
-                      itemBuilder: (context, index) {
-                        return PeriodList(day: today + index);
-                      }),
-                ),
-              ],
+                  ),
+                  SafeArea(child: Column(
+                      children: [
+                        Expanded(
+                          child: CourseList(
+                            function: refreshLists,
+                          ),
+                        ),
+                      ],
+                    ),),
+                  Scaffold(
+                    appBar: AppBar(title: Text('Study Time'), actions: [
+                      IconButton(
+                          icon: Icon(Icons.settings),
+                          onPressed: () => navigateToSettingsPage(context))
+                    ]),
+                    body: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Center(
+                              child: SizedBox(
+                            width: double.infinity,
+                            child: FlatButton(
+                                onPressed: () {
+                                  navigateToPeriodInputPage(context);
+                                },
+                                child: Text('Add A Period')),
+                          )),
+                          Divider(
+                            height: 0,
+                            thickness: 2,
+                          ),
+                          Center(
+                              child: SizedBox(
+                            width: double.infinity,
+                            child: FlatButton(
+                                onPressed: () {
+                                  navigateToCourseInputPage(context);
+                                },
+                                child: Text('Add A Course')),
+                          )),
+                          Divider(
+                            height: 0,
+                            thickness: 2,
+                          ),
+                        ]),
+                  ),
+                  SafeArea(
+                    child: Icon(Icons.calendar_today)
+                  ),
+                  SafeArea(child: Icon(Icons.tonality)),
+                ],
+              ),
             ),
-            Column(children: [
-              Expanded(
-                child: CourseList(
-                  function: refreshLists,
-                ),
-              )
-            ]),
+            Divider(
+              thickness: 2,
+            ),
+            Container(
+              width: MediaQuery.of(context).copyWith().size.width,
+              child: Row(
+                children: [
+                  Flexible(
+                    fit: FlexFit.tight,
+                    child: TabBar(
+                        labelColor: Colors.grey[50],//!isdark(context)? Colors.grey[800] : Colors.grey[100],
+                        //unselectedLabelColor: !isdark(context) ? Colors.grey[800] : Colors.grey[100],
+                        labelPadding: EdgeInsets.zero,
+                        //indicatorColor: Colors.transparent,
+                        tabs: [
+                          Tab(
+                              icon: Icon(
+                            Icons.home,
+                          )),
+                          Tab(
+                              icon: Icon(
+                            Icons.school,
+                          )),
+                          Tab(
+                              icon: Icon(
+                            Icons.add,
+                          )),
+                          Tab(
+                            icon: Icon(
+                              Icons.calendar_today
+                            ),
+                          ),
+                          Tab(
+                              icon: Icon(
+                            Icons.tonality,
+                          )),
+                        ]),
+                  ),
+                ],
+              ),
+            ),
           ],
-        ),
-        floatingActionButton: ValueListenableBuilder(
-          valueListenable: scrollCheck,
-          builder: (context, bool upDirection, Widget child) {
-            if (appear != upDirection) {
-              Future.delayed(Duration(milliseconds: 0), () {
-                setState(() {
-                  Future.delayed(Duration(milliseconds: 200), () {
-                    appear = upDirection;
-                  });
-
-                  if (click & !upDirection) {
-                    click = false;
-                    click1 = false;
-                  }
-                });
-              });
-            }
-
-            return Stack(alignment: Alignment.bottomRight, children: [
-              DoubleButton(
-                function: refreshLists,
-              ),
-              AnimatedContainer(
-                margin: EdgeInsets.only(
-                  bottom: appear ? 0 : 22,
-                  right: appear ? 0 : 30,
-                ),
-                alignment: Alignment.center,
-                duration: Duration(milliseconds: 300),
-                width: appear ? 60 : 0,
-                height: appear ? 60 : 0,
-                child: FloatingActionButton(
-                  heroTag: 'add',
-                  onPressed: () {
-                    setState(() {
-                      if (click1) {
-                        click1 = !click1;
-                      } else {
-                        click = !click;
-                        disappear = false;
-                      }
-                    });
-                  },
-                  child: Stack(children: [
-                    Text(
-                      '+',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 23,
-                        foreground: Paint()
-                          ..style = PaintingStyle.stroke
-                          ..strokeWidth = 2
-                          ..color = Colors.black,
-                      ),
-                    ),
-                    Text(
-                      "+",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 23,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ]),
-                ),
-              ),
-            ]);
-          },
         ),
       ),
     );
@@ -512,3 +526,75 @@ class ButtonSubtitle extends StatelessWidget {
         ));
   }
 }
+
+/*
+floatingActionButton: ValueListenableBuilder(
+          valueListenable: scrollCheck,
+          builder: (context, bool upDirection, Widget child) {
+            if (appear != upDirection) {
+              Future.delayed(Duration(milliseconds: 0), () {
+                setState(() {
+                  Future.delayed(Duration(milliseconds: 200), () {
+                    appear = upDirection;
+                  });
+
+                  if (click & !upDirection) {
+                    click = false;
+                    click1 = false;
+                  }
+                });
+              });
+            }
+
+            return Stack(alignment: Alignment.bottomRight, children: [
+              DoubleButton(
+                function: refreshLists,
+              ),
+              AnimatedContainer(
+                margin: EdgeInsets.only(
+                  bottom: appear ? 0 : 22,
+                  right: appear ? 0 : 30,
+                ),
+                alignment: Alignment.center,
+                duration: Duration(milliseconds: 300),
+                width: appear ? 60 : 0,
+                height: appear ? 60 : 0,
+                child: FloatingActionButton(
+                  heroTag: 'add',
+                  onPressed: () {
+                    setState(() {
+                      if (click1) {
+                        click1 = !click1;
+                      } else {
+                        click = !click;
+                        disappear = false;
+                      }
+                    });
+                  },
+                  child: Stack(children: [
+                    Text(
+                      '+',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 23,
+                        foreground: Paint()
+                          ..style = PaintingStyle.stroke
+                          ..strokeWidth = 2
+                          ..color = Colors.black,
+                      ),
+                    ),
+                    Text(
+                      "+",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 23,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ]),
+                ),
+              ),
+            ]);
+          },
+        ),
+        */

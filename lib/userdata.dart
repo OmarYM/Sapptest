@@ -4,6 +4,7 @@ import 'package:Sapptest/dbhelper.dart';
 import 'package:Sapptest/period.dart';
 import 'package:Sapptest/sharedPrefs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'course.dart';
 
 
@@ -13,9 +14,20 @@ DBHelperCourse dbcourses;
 List<Period> periods;
 List<Course> courses;
 
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+NotificationAppLaunchDetails notificationAppLaunchDetails;
 
+bool isdark(BuildContext context) {
+  return MediaQuery.of(context).platformBrightness == Brightness.dark;
+}
+
+Color oppositeAccent(BuildContext context){
+  return isdark(context) ? Colors.red[500] : Colors.tealAccent[200];
+}
 
 SharedPref prefs;
+
+int nid;
 
 bool courseCheck(String title) {
   bool result = false;
@@ -42,13 +54,12 @@ List<Period> allFromDay(int day) {
   return result;
 }
 
-List<Period> allFromCourse(String title) {
+List<Period> allFromCourse(String id) {
   List<Period> result = [];
 
   periods.forEach((element) {
-    if (title.toLowerCase().compareTo(element.course.title.toLowerCase()) == 0) {
+    if (id.compareTo(element.courseId) == 0) {
       result.add(element);
-
     }
   });
 
@@ -57,23 +68,34 @@ List<Period> allFromCourse(String title) {
 
 void deleteCourse(Course course){
   periods.forEach((element) {
-    if (course.title.toLowerCase().compareTo(element.course.title.toLowerCase()) == 0) {
-      dbperiods.delete(element.id);
-      //periods.remove(element);
+    if (course.id.compareTo(element.courseId) == 0) {
+      dbperiods.delete(element.courseId);
       
     }   
   });
 
-  dbcourses.delete(course.title);
+  dbcourses.delete(course.id);
   courses.remove(course);
    
 }
+
+String getCourseTitle(String id){
+
+  String result;
+
+  courses.forEach((element) {if(element.id == id){
+    result = element.title;
+  }});
+
+  return result ?? '';
+}
+
+
 
 bool upDirection, flag ;
 
 Brightness brightness;
 
-int id;
 
  String getDayOfTheWeek(int day) {
     switch (day) {

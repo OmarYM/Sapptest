@@ -19,13 +19,13 @@ class SharedPref {
 
   saveId(int id) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setInt('id', id);
+    prefs.setInt('nid', id);
   }
 
   Future<int> getId() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     //Return int
-    int id = prefs.getInt('id');
+    int id = prefs.getInt('nid');
     return id;
   }
 }

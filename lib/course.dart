@@ -4,18 +4,21 @@ class Course {
   String title = 'empty';
   String courseCode = '';
   String description = '';
+  String id;
 
-  Course({@required this.title, this.description, this.courseCode});
+  Course({@required this.title, @required this.id, this.description, this.courseCode});
 
   Course.fromMap(Map<String, dynamic> json)
       : description = json['description'],
         courseCode = json['courseCode'],
-        title = json['title'];
+        title = json['title'],
+        id = json['id'];
 
   Map<String, dynamic> toMap() => {
         'description': description,
         'courseCode': courseCode,
         'title': title,
+        'id': id,
       };
 
   bool operator ==(Object other) {

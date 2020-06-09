@@ -1,18 +1,55 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'mainPage.dart';
+import 'userdata.dart';
 
-void main() {
+
+
+Future<void> main() async {
+
+  WidgetsFlutterBinding.ensureInitialized();
+
+  flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  notificationAppLaunchDetails =
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+  var initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
+  // Note: permissions aren't requested here just to demonstrate that can be done later using the `requestPermissions()` method
+  // of the `IOSFlutterLocalNotificationsPlugin` class
+  var initializationSettingsIOS = IOSInitializationSettings(
+      requestAlertPermission: false,
+      requestBadgePermission: false,
+      requestSoundPermission: false,
+      onDidReceiveLocalNotification:
+          (int id, String title, String body, String payload) async {});
+          
+  var initializationSettings = InitializationSettings(
+      initializationSettingsAndroid, initializationSettingsIOS);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+    if (payload != null) {
+      debugPrint('notification payload: ' + payload);
+    }
+  });  
+
   runApp(MyApp());
 }
 
+
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+    
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       //showPerformanceOverlay: true,
       title: 'Flutter Demo',
-      theme: ThemeData(
+      theme: 
+      ThemeData(
         // This is the theme of your application.
         //
         // Try running your application with "flutter run". You'll see the
@@ -22,8 +59,10 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
-        accentColor: Colors.red,
+        //primarySwatch: Colors.deepPurple,
+        brightness: Brightness.dark,
+        //accentColor: Colors.red,
+        tabBarTheme: TabBarTheme(labelPadding: EdgeInsets.zero),
         // This makes the visual density adapt to the platform that you run
         // the app on. For desktop platforms, the controls will be smaller and
         // closer together (more dense) than on mobile platforms.

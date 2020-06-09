@@ -11,7 +11,8 @@ class CourseSlot extends StatelessWidget {
   final Course course;
   final Function function;
   final int index;
-  CourseSlot({Key key, this.course, this.index, this.function}) : super(key: key);
+  CourseSlot({Key key, this.course, this.index, this.function})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,14 +23,16 @@ class CourseSlot extends StatelessWidget {
           Navigator.push(
               context,
               PageTransition(
-                alignment: Alignment.center,
-                type: PageTransitionType.upToDown,
-                curve: Curves.easeOut,
-                duration: Duration(milliseconds: 500),
+                  alignment: Alignment.center,
+                  type: PageTransitionType.upToDown,
+                  curve: Curves.easeOut,
+                  duration: Duration(milliseconds: 200),
                   child: CoursePage(
-                        course: course,
-                        index: index,
-                      ))).then((value) {function();});
+                    course: course,
+                    index: index,
+                  ))).then((value) {
+            function();
+          });
         },
         contentPadding: EdgeInsets.all(0),
         visualDensity: VisualDensity.compact,
@@ -63,7 +66,8 @@ class CourseList extends StatefulWidget {
   final Function function;
   const CourseList({
     Key key,
-    this.day, this.function,
+    this.day,
+    this.function,
   }) : super(key: key);
 
   @override
@@ -72,10 +76,14 @@ class CourseList extends StatefulWidget {
 
 class _CourseListState extends State<CourseList> {
   ScrollController _controller;
-  
+  int totalHours = 0;
 
   @override
   void initState() {
+    periods.forEach((element) {
+      totalHours += element.getPeriodLength;
+    });
+
     _controller = ScrollController()
       ..addListener(() {
         upDirection =
@@ -106,6 +114,35 @@ class _CourseListState extends State<CourseList> {
                     style: TextStyle(
                       fontSize: width / 7,
                       fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Number Of Courses: " + courses.length.toString(),
+                      style: TextStyle(
+                        fontSize: width / 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Length Of All Classes: " +
+                          (totalHours / 60).toStringAsFixed(0) +
+                          ":" +
+                          (totalHours % 60).toString().padLeft(2, '0'),
+                      style: TextStyle(
+                        fontSize: width / 25,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),

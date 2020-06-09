@@ -1,6 +1,7 @@
 import 'package:Sapptest/course.dart';
 import 'package:Sapptest/userdata.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 //TimeOfDay start;
 //TimeOfDay end;
@@ -140,9 +141,10 @@ class _CourseInputState extends State<CourseInput> {
                         var title = _titleFormKey.currentState.value;
                         var code = _codeFormKey.currentState.value;
                         var desc = _descriptionFormKey.currentState.value;
+                        var id = Uuid().v1();
 
                         Course course = Course(
-                            title: title, courseCode: code, description: desc);
+                            id: id, title: title, courseCode: code, description: desc);
 
                         dbcourses.save(course);
 
