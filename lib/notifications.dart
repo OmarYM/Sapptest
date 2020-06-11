@@ -4,7 +4,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 Future<void> scheduleWeeklyNotification(
     int hour, int minute, Period period, int day) async {
-      print(hour.toString() + ":" + minute.toString()+" day" + day.toString());
+      //print(hour.toString() + ":" + minute.toString()+" day" + day.toString());
   var time = Time(hour, minute, 0);
   var androidPlatformChannelSpecifics = AndroidNotificationDetails(
       period.id,

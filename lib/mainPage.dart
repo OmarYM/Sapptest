@@ -66,7 +66,6 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
   }
 
   void refreshLists() {
-    
     dbperiods.getPeriods().then((value) {
       if (value != null) {
         setState(() {
@@ -81,15 +80,18 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
         });
       }
     });
-
-    
   }
 
   Future navigateToSettingsPage(context) async {
     Navigator.push(
             context,
-            MaterialPageRoute(
-                builder: (context) => SettingsPage(parentContext: context)))
+            PageTransition(
+                child: SettingsPage(
+                  parentContext: context,
+                ),
+                type: PageTransitionType.rightToLeftWithFade,
+                curve: Curves.easeInOut,
+                duration: Duration(milliseconds: 200)))
         .then((value) {
       refreshLists();
     });
@@ -100,7 +102,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             context,
             PageTransition(
                 child: PeriodInput(),
-                type: PageTransitionType.upToDown,
+                type: PageTransitionType.rightToLeftWithFade,
                 curve: Curves.easeInOut,
                 duration: Duration(milliseconds: 200)))
         .then((value) {
@@ -113,7 +115,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             context,
             PageTransition(
                 child: CourseInput(),
-                type: PageTransitionType.upToDown,
+                type: PageTransitionType.rightToLeftWithFade,
                 curve: Curves.easeInOut,
                 duration: Duration(milliseconds: 200)))
         .then((value) {
@@ -131,7 +133,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
       length: 5,
       child: Scaffold(
         key: _scaffoldKey,
-        drawer: Drawer(
+        /*drawer: Drawer(
           child: Scaffold(
             appBar: AppBar(
               leading: Container(
@@ -205,7 +207,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               ],
             ),
           ),
-        ),
+        ),*/
         body: Column(
           children: [
             Expanded(
@@ -227,13 +229,17 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                               controller: page,
                               itemCount: 7,
                               itemBuilder: (context, index) {
-                                return PeriodList(day: today + index, refresh: refreshLists,);
+                                return PeriodList(
+                                  day: today + index,
+                                  refresh: refreshLists,
+                                );
                               }),
                         ),
                       ],
                     ),
                   ),
-                  SafeArea(child: Column(
+                  SafeArea(
+                    child: Column(
                       children: [
                         Expanded(
                           child: CourseList(
@@ -241,47 +247,83 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                           ),
                         ),
                       ],
-                    ),),
+                    ),
+                  ),
                   Scaffold(
-                    appBar: AppBar(title: Text('Study Time'), actions: [
+                    appBar: AppBar(title: Text('What Do You Want To Add?', style: TextStyle(fontSize: 20),), centerTitle: true, actions: [
                       IconButton(
                           icon: Icon(Icons.settings),
                           onPressed: () => navigateToSettingsPage(context))
                     ]),
-                    body: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Center(
-                              child: SizedBox(
-                            width: double.infinity,
-                            child: FlatButton(
-                                onPressed: () {
-                                  navigateToPeriodInputPage(context);
-                                },
-                                child: Text('Add A Period')),
-                          )),
-                          Divider(
-                            height: 0,
-                            thickness: 2,
-                          ),
-                          Center(
-                              child: SizedBox(
-                            width: double.infinity,
-                            child: FlatButton(
-                                onPressed: () {
-                                  navigateToCourseInputPage(context);
-                                },
-                                child: Text('Add A Course')),
-                          )),
-                          Divider(
-                            height: 0,
-                            thickness: 2,
-                          ),
-                        ]),
+                    body: SingleChildScrollView(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Center(
+                                  child: SizedBox(
+                                width: double.infinity,
+                                child: FlatButton(
+                                    onPressed: () {
+                                      navigateToCourseInputPage(context);
+                                    },
+                                    child: Text(
+                                      'Course',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 30),
+                                    )),
+                              )),
+                            ),
+                            Divider(
+                              height: 0,
+                              thickness: 2,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Center(
+                                  child: SizedBox(
+                                width: double.infinity,
+                                child: FlatButton(
+                                    onPressed: () {
+                                      navigateToPeriodInputPage(context);
+                                    },
+                                    child: Text(
+                                      'Period',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 30),
+                                    )),
+                              )),
+                            ),
+                            Divider(
+                              height: 0,
+                              thickness: 2,
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Center(
+                                  child: SizedBox(
+                                width: double.infinity,
+                                child: FlatButton(
+                                    onPressed: () {
+                                      //navigateToPeriodInputPage(context);
+                                    },
+                                    child: Text(
+                                      'Event',
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(fontSize: 30),
+                                    )),
+                              )),
+                            ),
+                            Divider(
+                              height: 0,
+                              thickness: 2,
+                            ),
+                            
+                          ]),
+                    ),
                   ),
-                  SafeArea(
-                    child: Icon(Icons.calendar_today)
-                  ),
+                  SafeArea(child: Icon(Icons.calendar_today)),
                   SafeArea(child: Icon(Icons.tonality)),
                 ],
               ),
@@ -296,7 +338,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   Flexible(
                     fit: FlexFit.tight,
                     child: TabBar(
-                        labelColor: Colors.grey[50],//!isdark(context)? Colors.grey[800] : Colors.grey[100],
+                        labelColor: Colors.grey[
+                            50], //!isdark(context)? Colors.grey[800] : Colors.grey[100],
                         //unselectedLabelColor: !isdark(context) ? Colors.grey[800] : Colors.grey[100],
                         labelPadding: EdgeInsets.zero,
                         //indicatorColor: Colors.transparent,
@@ -314,9 +357,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                             Icons.add,
                           )),
                           Tab(
-                            icon: Icon(
-                              Icons.calendar_today
-                            ),
+                            icon: Icon(Icons.calendar_today),
                           ),
                           Tab(
                               icon: Icon(

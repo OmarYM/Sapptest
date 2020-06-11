@@ -562,6 +562,7 @@ class _PeriodInputsState extends State<PeriodInputs> {
                   }
 
                   dbperiods.update(period);
+                  periods.insert(periods.indexWhere((element) => element.id == period.id), period);
 
                   Navigator.pop(context);
                 } else if (_formKey.currentState.validate()) {

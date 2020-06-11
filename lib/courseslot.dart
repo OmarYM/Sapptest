@@ -24,12 +24,13 @@ class CourseSlot extends StatelessWidget {
               context,
               PageTransition(
                   alignment: Alignment.center,
-                  type: PageTransitionType.upToDown,
+                  type: PageTransitionType.rightToLeftWithFade,
                   curve: Curves.easeOut,
                   duration: Duration(milliseconds: 200),
                   child: CoursePage(
                     course: course,
                     index: index,
+                    refreshLists: function,
                   ))).then((value) {
             function();
           });
@@ -117,6 +118,7 @@ class _CourseListState extends State<CourseList> {
                     ),
                   ),
                 ),
+                
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
@@ -167,8 +169,6 @@ class _CourseListState extends State<CourseList> {
                           ),
                           Divider(
                             thickness: 2,
-                            indent: width / 20,
-                            endIndent: width / 20,
                           )
                         ]),
                       ),

@@ -69,8 +69,7 @@ List<Period> allFromCourse(String id) {
 void deleteCourse(Course course){
   periods.forEach((element) {
     if (course.id.compareTo(element.courseId) == 0) {
-      dbperiods.delete(element.courseId);
-      
+      dbperiods.delete(element.id);  
     }   
   });
 
