@@ -129,6 +129,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+
     return DefaultTabController(
       length: 5,
       child: Scaffold(
@@ -250,77 +252,127 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                     ),
                   ),
                   Scaffold(
-                    appBar: AppBar(title: Text('What Do You Want To Add?', style: TextStyle(fontSize: 20),), centerTitle: true, actions: [
-                      IconButton(
-                          icon: Icon(Icons.settings),
-                          onPressed: () => navigateToSettingsPage(context))
-                    ]),
-                    body: SingleChildScrollView(
-                      child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Center(
-                                  child: SizedBox(
-                                width: double.infinity,
-                                child: FlatButton(
-                                    onPressed: () {
-                                      navigateToCourseInputPage(context);
-                                    },
-                                    child: Text(
-                                      'Course',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 30),
-                                    )),
-                              )),
-                            ),
-                            Divider(
-                              height: 0,
-                              thickness: 2,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Center(
-                                  child: SizedBox(
-                                width: double.infinity,
-                                child: FlatButton(
-                                    onPressed: () {
-                                      navigateToPeriodInputPage(context);
-                                    },
-                                    child: Text(
-                                      'Period',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 30),
-                                    )),
-                              )),
-                            ),
-                            Divider(
-                              height: 0,
-                              thickness: 2,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(20.0),
-                              child: Center(
-                                  child: SizedBox(
-                                width: double.infinity,
-                                child: FlatButton(
-                                    onPressed: () {
-                                      //navigateToPeriodInputPage(context);
-                                    },
-                                    child: Text(
-                                      'Event',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(fontSize: 30),
-                                    )),
-                              )),
-                            ),
-                            Divider(
-                              height: 0,
-                              thickness: 2,
-                            ),
-                            
-                          ]),
+                    appBar: AppBar(
+                        title: Text(
+                          'What Do You Want To Add?',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        centerTitle: true,
+                        actions: [
+                          IconButton(
+                              icon: Icon(Icons.settings),
+                              onPressed: () => navigateToSettingsPage(context))
+                        ]),
+                    body: Align(
+                      alignment: Alignment.topCenter,
+                      child: SingleChildScrollView(
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.all(10.0),
+                              ),
+                              Container(
+                                width: width * 0.9,
+                                child: Material(
+                                  color: Theme.of(context).primaryColor,
+                                  elevation: 15,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                      child: SizedBox(
+                                    width: width * 0.9,
+                                    child: FlatButton(
+                                      onPressed: () {
+                                        navigateToCourseInputPage(context);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Text(
+                                          'Course',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 30),
+                                        ),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  )),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10.0),
+                              ),
+                              Container(
+                                width: width * 0.9,
+                                child: Material(
+                                  color: Theme.of(context).primaryColor,
+                                  elevation: 15,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                      child: SizedBox(
+                                    width: width * 0.9,
+                                    child: FlatButton(
+                                      onPressed: () {
+                                        navigateToPeriodInputPage(context);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Text(
+                                          'Period',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 30),
+                                        ),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  )),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10.0),
+                              ),
+                              Container(
+                                width: width * 0.9,
+                                child: Material(
+                                  color: Theme.of(context).primaryColor,
+                                  elevation: 15,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Center(
+                                      child: SizedBox(
+                                    width: width * 0.9,
+                                    child: FlatButton(
+                                      onPressed: () {
+                                        //navigateToCourseInputPage(context);
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20.0),
+                                        child: Text(
+                                          'Event',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 30),
+                                        ),
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                  )),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.all(10.0),
+                              ),
+                            ]),
+                      ),
                     ),
                   ),
                   SafeArea(child: Icon(Icons.calendar_today)),
@@ -330,6 +382,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
             ),
             Divider(
               thickness: 2,
+              height: 0,
             ),
             Container(
               width: MediaQuery.of(context).copyWith().size.width,

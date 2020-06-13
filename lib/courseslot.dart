@@ -18,45 +18,53 @@ class CourseSlot extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(left: 15, right: 15),
-      child: ListTile(
-        onTap: () async {
-          Navigator.push(
-              context,
-              PageTransition(
-                  alignment: Alignment.center,
-                  type: PageTransitionType.rightToLeftWithFade,
-                  curve: Curves.easeOut,
-                  duration: Duration(milliseconds: 200),
-                  child: CoursePage(
-                    course: course,
-                    index: index,
-                    refreshLists: function,
-                  ))).then((value) {
-            function();
-          });
-        },
-        contentPadding: EdgeInsets.all(0),
-        visualDensity: VisualDensity.compact,
-        title: Center(
-            child: Text(
-          course.title,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 20),
-        )),
-        subtitle: course.courseCode.isNotEmpty
-            ? Column(
-                children: [
-                  Center(
-                      child: Text(
-                    course.courseCode,
-                    textAlign: TextAlign.center,
-                  )),
-                ],
-              )
-            : Container(
-                height: 0,
-                width: 0,
-              ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Material(
+          borderRadius: BorderRadius.circular(15),
+          elevation: 18,
+          color: Colors.grey[800],
+                child: ListTile(
+            onTap: () async {
+              Navigator.push(
+                  context,
+                  PageTransition(
+                      alignment: Alignment.center,
+                      type: PageTransitionType.rightToLeftWithFade,
+                      curve: Curves.easeOut,
+                      duration: Duration(milliseconds: 200),
+                      child: CoursePage(
+                        course: course,
+                        index: index,
+                        refreshLists: function,
+                      ))).then((value) {
+                function();
+              });
+            },
+            contentPadding: EdgeInsets.all(0),
+            //visualDensity: VisualDensity.compact,
+            title: Center(
+                child: Text(
+              course.title,
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            )),
+            subtitle: course.courseCode.isNotEmpty
+                ? Column(
+                    children: [
+                      Center(
+                          child: Text(
+                        course.courseCode,
+                        textAlign: TextAlign.center,
+                      )),
+                    ],
+                  )
+                : Container(
+                    height: 0,
+                    width: 0,
+                  ),
+          ),
+        ),
       ),
     );
   }
@@ -167,9 +175,6 @@ class _CourseListState extends State<CourseList> {
                               index: index,
                             ),
                           ),
-                          Divider(
-                            thickness: 2,
-                          )
                         ]),
                       ),
                     ),

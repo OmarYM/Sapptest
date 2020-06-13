@@ -135,6 +135,7 @@ class _DayCheckBoxState extends State<DayCheckBox> {
     return Column(children: [
       Checkbox(
         value: checked,
+        checkColor: Theme.of(context).primaryColor,
         onChanged: (value) {
 
           setState(() {

@@ -75,6 +75,7 @@ class _CourseInputState extends State<CourseInput> {
                     top: 5.0, bottom: 15, left: 25, right: 25),
                 child: TextFormField(
                   key: _titleFormKey,
+                  textCapitalization: TextCapitalization.words,
                   decoration: const InputDecoration(
                     hintText: 'Enter Course Title',
                   ),

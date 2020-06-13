@@ -114,6 +114,7 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                 widget.title,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headline6.copyWith(
+                
                       fontSize: 20,
                     ),
               )),
@@ -128,122 +129,128 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
         elevation: 18,
         color: Colors.grey[800],
         borderRadius: BorderRadius.all(Radius.circular(15.0)),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: AnimatedSize(
-            curve: Curves.bounceOut,
-            vsync: this,
-            duration: Duration(milliseconds: 400),
-            child: Container(
-              color: Colors.red[850],
-              height: deleted ? 0 : null,
-              width: deleted ? 0 : null,
-              child: Stack(children: [
-                Opacity(
-                  opacity: 0,
-                  child: ListTile(
-                    leading: widget.isNext
-                        ? Container(
-                            width: 20,
-                            child: Icon(
-                              Icons.play_arrow,
-                              color: Theme.of(context).accentColor,
-                            ),
-                          )
-                        : null,
-                    title: courseTitle,
+        child: InkWell(
+          onLongPress: () {
+            setState(() {
+              selected = !selected;
+            });
+          },
+          onTap: () {
+            setState(() {
+              selected = false;
+            });
+          },
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: AnimatedSize(
+              curve: Curves.bounceOut,
+              vsync: this,
+              duration: Duration(milliseconds: 400),
+              child: Container(
+                color: Colors.red[850],
+                height: deleted ? 0 : null,
+                width: deleted ? 0 : null,
+                child: Stack(children: [
+                  Opacity(
+                    opacity: 0,
+                    child: ListTile(
+                      leading: widget.isNext
+                          ? Container(
+                              width: 20,
+                              child: Icon(
+                                Icons.play_arrow,
+                                color: Theme.of(context).accentColor,
+                              ),
+                            )
+                          : null,
+                      title: courseTitle,
+                    ),
                   ),
-                ),
-                deleted
-                    ? Container()
-                    : Positioned(
-                        //left: double.infinity,
-                        right: 0,
-                        child: AnimatedContainer(
-                          duration: Duration(milliseconds: 200),
-                          //color: Colors.red[800],
-                          padding: EdgeInsets.only(left: 25.0),
-                          width: selected ? width * 0.4 : 0,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                flex: 2,
-                                child: Container(
+                  deleted
+                      ? Container()
+                      : Positioned(
+                          //left: double.infinity,
+                          right: 0,
+                          child: AnimatedContainer(
+                            duration: Duration(milliseconds: 200),
+                            //color: Colors.red[800],
+                            padding: EdgeInsets.only(left: 25.0),
+                            width: selected ? width * 0.4 : 0,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  flex: 2,
+                                  child: Container(
+                                    child: Padding(
+                                      padding:
+                                          const EdgeInsets.only(left: 20.0),
+                                      child: IconButton(
+                                          icon: Icon(
+                                            Icons.edit,
+                                          ),
+                                          onPressed: () {
+                                            navigateToPeriodPage(context);
+                                          }),
+                                    ),
+                                  ),
+                                ),
+                                Flexible(
+                                  flex: 2,
                                   child: Padding(
-                                    padding:
-                                        const EdgeInsets.only(left: 20.0),
+                                    padding: const EdgeInsets.only(left: 8.0),
                                     child: IconButton(
-                                        icon: Icon(Icons.edit,),
+                                        icon: Icon(
+                                          Icons.delete,
+                                        ),
                                         onPressed: () {
-                                          navigateToPeriodPage(context);
+                                          setState(() {
+                                            deleted = true;
+                                            periods.remove(widget.period);
+                                            dbperiods.delete(widget.period.id);
+                                            widget.refresh();
+                                          });
                                         }),
                                   ),
                                 ),
-                              ),
-                              Flexible(
-                                flex: 2,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: IconButton(
-                                      icon: Icon(Icons.delete,),
-                                      onPressed: () {
-                                        setState(() {
-                                          deleted = true;
-                                          periods.remove(widget.period);
-                                          dbperiods.delete(widget.period.id);
-                                          widget.refresh();
-                                        });
-                                      }),
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                AnimatedPositioned(
-                  right: selected ? width * 0.125 : 0,
-                  //top: 50,
-                  duration: Duration(milliseconds: 300),
-                  curve: Curves.bounceOut,
-                  child: Ink(
-                    color: Colors.grey[800],
-                    child: AnimatedContainer(
-                      curve: Curves.bounceOut,
-                      width: width,
-                      duration: Duration(milliseconds: 500),
-                      child: ListTile(
-                        //contentPadding: EdgeInsets.only(left: width*0.2),
-                        onLongPress: () {
-                          setState(() {
-                            selected = !selected;
-                          });
-                        },
-                        onTap: () {
-                          setState(() {
-                            selected = false;
-                          });
-                        },
-                        title: courseTitle,
+                  AnimatedPositioned(
+                    right: selected ? width * 0.125 : 0,
+                    //top: 50,
+                    duration: Duration(milliseconds: 300),
+                    curve: Curves.bounceOut,
+                    child: Ink(
+                      color: Colors.grey[800],
+                      child: AnimatedContainer(
+                        curve: Curves.bounceOut,
+                        width: width,
+                        duration: Duration(milliseconds: 500),
+                        child: ListTile(
+                          //contentPadding: EdgeInsets.only(left: width*0.2),
+                          title: courseTitle,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                AnimatedPositioned(
-                  curve: Curves.bounceOut,
-                  top: 20,
-                  right: selected ? width * 1 : width * 0.8,
-                  width: width * 0.2,
-                  child: widget.isNext
-                      ? Icon(
-                          Icons.play_arrow,
-                          color: Theme.of(context).accentColor,
-                        )
-                      : Container(),
-                  duration: Duration(milliseconds: 490),
-                ),
-              ]),
+                  AnimatedPositioned(
+                    curve: Curves.bounceOut,
+                    top: 20,
+                    right: selected ? width * 1 : width * 0.8,
+                    width: width * 0.2,
+                    child: widget.isNext
+                        ? Icon(
+                            Icons.play_arrow,
+                            color: Theme.of(context).accentColor,
+                          )
+                        : Container(),
+                    duration: Duration(milliseconds: 490),
+                  ),
+                ]),
+              ),
             ),
           ),
         ),
@@ -361,10 +368,10 @@ class CoursePeriodList extends StatefulWidget {
   final Course course;
   final int index;
 
-
   const CoursePeriodList({
     Key key,
-    this.course, this.index,
+    this.course,
+    this.index,
   }) : super(key: key);
 
   @override
@@ -448,19 +455,20 @@ class _CoursePeriodListState extends State<CoursePeriodList> {
     var width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(title: Hero(
-              tag: 'coursetile' + widget.index.toString(),
-              child: Material(
-                type: MaterialType.transparency,
-                child: Container(
-                  child: Text(
-                    widget.course.title,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 30, fontWeight: FontWeight.bold),
-                  ),
+      appBar: AppBar(
+        title: Hero(
+            tag: 'coursetile' + widget.index.toString(),
+            child: Material(
+              type: MaterialType.transparency,
+              child: Container(
+                child: Text(
+                  widget.course.title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
                 ),
-              )),),
+              ),
+            )),
+      ),
       body: ListView.builder(
         key: new Key('huh'),
         itemBuilder: (context, index) {

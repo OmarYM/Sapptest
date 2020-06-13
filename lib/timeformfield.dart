@@ -31,7 +31,8 @@ class TimeFormField extends FormField<TimeOfDay> {
                       hoverColor: Colors.grey[700],
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10),
-                          side: BorderSide(color: Colors.grey[700])),
+                          ),
+                          color: Theme.of(context).primaryColor,
                     ),
                   ]);
             });

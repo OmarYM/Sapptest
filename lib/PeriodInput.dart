@@ -183,6 +183,7 @@ class _PeriodInputsState extends State<PeriodInputs> {
     if (!notificationArray.contains(widget.initialNotification) &&
         widget.initialNotification != null) {
       _notification2 = widget.initialNotification;
+      _notification = -2;
       _other2 = true;
     } else {
       _notification = widget.initialNotification;
@@ -190,6 +191,7 @@ class _PeriodInputsState extends State<PeriodInputs> {
 
     if (!typeArray.contains(widget.initialType) && widget.initialType != null) {
       _type2 = widget.initialType;
+      _type = 'Other';
       _other1 = true;
     } else {
       _type = widget.initialType;
@@ -200,6 +202,8 @@ class _PeriodInputsState extends State<PeriodInputs> {
 
   @override
   Widget build(BuildContext context) {
+    var width =  MediaQuery.of(context).copyWith().size.width;
+
     var notificationDropdownMenu = DropdownButtonFormField(
         key: _notificationFormKey,
         isExpanded: true,
@@ -383,10 +387,11 @@ class _PeriodInputsState extends State<PeriodInputs> {
           _other1
               ? Padding(
                   padding:
-                      const EdgeInsets.only(bottom: 15.0, left: 15, right: 15),
+                      const EdgeInsets.only(bottom: 15.0, left: 8, right: 8),
                   child: TextFormField(
                     initialValue: _type2,
                     key: _textFormKey,
+                    textCapitalization: TextCapitalization.words,
                     decoration: const InputDecoration(
                       hintText: 'Enter Period Type',
                     ),
@@ -492,7 +497,7 @@ class _PeriodInputsState extends State<PeriodInputs> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.only(top: 8.0),
               child: notificationDropdownMenu,
             ),
             _other2
@@ -504,7 +509,7 @@ class _PeriodInputsState extends State<PeriodInputs> {
                     ),
                     keyboardType: TextInputType.number,
                     validator: (value) {
-                      if (value.isEmpty && _other1) {
+                      if ((value == null || value.isEmpty) && _other2) {
                         return 'Please Enter A TIme';
                       } else if (int.parse(value) >= 24 * 60 && _other2) {
                         return 'Value should be less than 1440   (Max 1 day)';
@@ -521,95 +526,106 @@ class _PeriodInputsState extends State<PeriodInputs> {
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
           child: Center(
-            child: RaisedButton(
-              onPressed: () {
-                // Validate will return true if the form is valid, or false if
-                // the form is invalid.
-                if (widget.initialId != null &&
-                    _formKey.currentState.validate()) {
-                  var title = _other1
-                      ? _textFormKey.currentState.value
-                      : _typeFormKey.currentState.value;
-                  var startTime = _startFormKey.currentState.value;
-                  var endTime = _endFormKey.currentState.value;
-                  var course = _courseFormKey.currentState.value;
-                  var day = widget.initialDay;
-                  var notification = _other2
-                      ? int.parse(_notificationFormKey2.currentState.value)
-                      : _notificationFormKey.currentState.value;
-                  var id = widget.initialId;
-                  var nid = widget.initialNotificationId;
-
-                  Period period = Period(id, startTime, endTime, title, day,
-                      course.id, notification, nid);
-
-                  if (notification != -1) {
-                    int total = startTime.hour*60 + startTime.minute;
-                      var day = period.day;
-
-                      total -= notification;
-
-                      if(total<0){
-                        total += 23*60+59;
-                        day = (day-1)%7;    
-                      }
-
-                      scheduleWeeklyNotification(
-                          total~/60, (total%60), period, day);
-                          
-                  } else {
-                    deleteNotification(nid);
-                  }
-
-                  dbperiods.update(period);
-                  periods.insert(periods.indexWhere((element) => element.id == period.id), period);
-
-                  Navigator.pop(context);
-                } else if (_formKey.currentState.validate()) {
-                  // Process data.
-                  var title = _other1
-                      ? _textFormKey.currentState.value
-                      : _typeFormKey.currentState.value;
-                  TimeOfDay startTime = _startFormKey.currentState.value;
-                  TimeOfDay endTime = _endFormKey.currentState.value;
-                  var course = _courseFormKey.currentState.value;
-                  var notification = _other2
-                      ? int.parse(_notificationFormKey2.currentState.value)
-                      : _notificationFormKey.currentState.value;
-
-                  _dayFormKey.currentState.value.forEach((day) {
-                    var id = Uuid().v1();
+            child: Container(
+              width: width*0.8,
+                          child: RaisedButton(
+                            shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          ),
+                            elevation: 15,
+                            color: Theme.of(context).primaryColor,
+                onPressed: () {
+                  // Validate will return true if the form is valid, or false if
+                  // the form is invalid.
+                  if (widget.initialId != null &&
+                      _formKey.currentState.validate()) {
+                    var title = _other1
+                        ? _textFormKey.currentState.value
+                        : _typeFormKey.currentState.value;
+                    var startTime = _startFormKey.currentState.value;
+                    var endTime = _endFormKey.currentState.value;
+                    var course = _courseFormKey.currentState.value;
+                    var day = widget.initialDay;
+                    var notification = _other2
+                        ? int.parse(_notificationFormKey2.currentState.value)
+                        : _notificationFormKey.currentState.value;
+                    var id = widget.initialId;
+                    var nid = widget.initialNotificationId;
 
                     Period period = Period(id, startTime, endTime, title, day,
                         course.id, notification, nid);
 
-                        nid++;
-                        prefs.saveId(nid);
-
                     if (notification != -1) {
                       int total = startTime.hour*60 + startTime.minute;
-                      var day = period.day;
+                        var day = period.day;
 
-                      total -= notification;
+                        total -= notification;
 
-                      if(total<0){
-                        total += 23*60+59;
-                        day = (day-1)%7;
-                      }
+                        if(total<0){
+                          total += 23*60+59;
+                          day = (day-1)%7;    
+                        }
 
-                      scheduleWeeklyNotification(
-                          total~/60, (total%60), period, day);
+                        scheduleWeeklyNotification(
+                            total~/60, (total%60), period, day);
+                            
+                    } else {
+                      deleteNotification(nid);
                     }
 
-                    dbperiods.save(period);
-                  });
+                    dbperiods.update(period);
+                    periods.insert(periods.indexWhere((element) => element.id == period.id), period);
 
-                  Navigator.pop(context);
-                } else {
-                  setState(() {});
-                }
-              },
-              child: Text('Submit'),
+                    Navigator.pop(context);
+                  } else if (_formKey.currentState.validate()) {
+                    // Process data.
+                    var title = _other1
+                        ? _textFormKey.currentState.value
+                        : _typeFormKey.currentState.value;
+                    TimeOfDay startTime = _startFormKey.currentState.value;
+                    TimeOfDay endTime = _endFormKey.currentState.value;
+                    var course = _courseFormKey.currentState.value;
+                    var notification = _other2
+                        ? int.parse(_notificationFormKey2.currentState.value)
+                        : _notificationFormKey.currentState.value;
+
+                    _dayFormKey.currentState.value.forEach((day) {
+                      var id = Uuid().v1();
+
+                      Period period = Period(id, startTime, endTime, title, day,
+                          course.id, notification, nid);
+
+                          nid++;
+                          prefs.saveId(nid);
+                
+                      if (notification != -1) {
+                        int total = startTime.hour*60 + startTime.minute;
+                        var day = period.day;
+
+                        total -= notification;
+
+                        if(total<0){
+                          total += 23*60+59;
+                          day = (day-1)%7;
+                        }
+
+                        scheduleWeeklyNotification(
+                            total~/60, (total%60), period, day);
+                      }
+
+                      dbperiods.save(period);
+                    });
+
+                    Navigator.pop(context);
+                  } else {
+                    setState(() {});
+                  }
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text('Submit', ),
+                ),
+              ),
             ),
           ),
         ),
