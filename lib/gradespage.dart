@@ -244,6 +244,10 @@ class _GradePageState extends State<GradesPage> {
 
                                                       dbGrades.save(newGrade);
 
+                                                      setState(() {
+                                                        courseGrades.add(newGrade);
+                                                      });
+
                                                       Navigator.pop(context);
                                                     }
                                                   },
@@ -270,9 +274,9 @@ class _GradePageState extends State<GradesPage> {
                       ),
                     )
                     : GradeSlot(
-                        grade: courseGrades[index - 1], refresh: refresh);
+                        grade: courseGrades[index - 2], refresh: refresh);
           },
-          itemCount: courseGrades.length + 1,
+          itemCount: courseGrades.length + 2,
         ));
   }
 }
