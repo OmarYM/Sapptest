@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
-      showPerformanceOverlay: true,
+      showPerformanceOverlay: false,
       title: 'Flutter Demo',
       theme: 
       ThemeData(
