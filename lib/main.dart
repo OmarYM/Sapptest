@@ -1,3 +1,4 @@
+import 'package:Sapptest/timerservice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -34,7 +35,13 @@ Future<void> main() async {
     }
   });  
 
-  runApp(MyApp());
+  final timerService = TimerService();
+  runApp(
+    TimerServiceProvider( // provide timer service to all widgets of your app
+      service: timerService,
+      child: MyApp(),
+    ),
+    );
 }
 
 
@@ -46,7 +53,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
-      //showPerformanceOverlay: true,
+      showPerformanceOverlay: true,
       title: 'Flutter Demo',
       theme: 
       ThemeData(
@@ -69,6 +76,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ), 
       darkTheme: ThemeData.dark(),
+
       home: MainPage()//MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }

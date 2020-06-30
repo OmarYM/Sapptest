@@ -3,6 +3,7 @@ import 'package:Sapptest/notifications.dart';
 import 'package:Sapptest/period.dart';
 import 'package:Sapptest/userdata.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';
 import 'courseinput.dart';
 import 'dayformfield.dart';
@@ -139,7 +140,7 @@ class PeriodInputs extends StatefulWidget {
 class _PeriodInputsState extends State<PeriodInputs> {
   void createSnackBar(BuildContext context) {
     final snackBar = new SnackBar(
-      duration: Duration(seconds: 30),
+      duration: Duration(seconds: 999),
       content: new Text('Seems like there are no courses.'),
       action: SnackBarAction(
           label: 'Add A Course',
@@ -202,7 +203,7 @@ class _PeriodInputsState extends State<PeriodInputs> {
 
   @override
   Widget build(BuildContext context) {
-    var width =  MediaQuery.of(context).copyWith().size.width;
+    var width = MediaQuery.of(context).copyWith().size.width;
 
     var notificationDropdownMenu = DropdownButtonFormField(
         key: _notificationFormKey,
@@ -508,6 +509,9 @@ class _PeriodInputsState extends State<PeriodInputs> {
                       hintText: 'Put the amount of time in Minutes',
                     ),
                     keyboardType: TextInputType.number,
+                    inputFormatters: <TextInputFormatter>[
+                      WhitelistingTextInputFormatter.digitsOnly
+                    ],
                     validator: (value) {
                       if ((value == null || value.isEmpty) && _other2) {
                         return 'Please Enter A TIme';
@@ -527,13 +531,13 @@ class _PeriodInputsState extends State<PeriodInputs> {
           padding: const EdgeInsets.symmetric(vertical: 16.0),
           child: Center(
             child: Container(
-              width: width*0.8,
-                          child: RaisedButton(
-                            shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          ),
-                            elevation: 15,
-                            color: Theme.of(context).primaryColor,
+              width: width * 0.8,
+              child: RaisedButton(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                elevation: 15,
+                color: Theme.of(context).primaryColor,
                 onPressed: () {
                   // Validate will return true if the form is valid, or false if
                   // the form is invalid.
@@ -556,25 +560,27 @@ class _PeriodInputsState extends State<PeriodInputs> {
                         course.id, notification, nid);
 
                     if (notification != -1) {
-                      int total = startTime.hour*60 + startTime.minute;
-                        var day = period.day;
+                      int total = startTime.hour * 60 + startTime.minute;
+                      var day = period.day;
 
-                        total -= notification;
+                      total -= notification;
 
-                        if(total<0){
-                          total += 23*60+59;
-                          day = (day-1)%7;    
-                        }
+                      if (total < 0) {
+                        total += 23 * 60 + 59;
+                        day = (day - 1) % 7;
+                      }
 
-                        scheduleWeeklyNotification(
-                            total~/60, (total%60), period, day);
-                            
+                      scheduleWeeklyNotification(
+                          total ~/ 60, (total % 60), period, day);
                     } else {
                       deleteNotification(nid);
                     }
 
                     dbperiods.update(period);
-                    periods.insert(periods.indexWhere((element) => element.id == period.id), period);
+                    periods.insert(
+                        periods
+                            .indexWhere((element) => element.id == period.id),
+                        period);
 
                     Navigator.pop(context);
                   } else if (_formKey.currentState.validate()) {
@@ -595,22 +601,22 @@ class _PeriodInputsState extends State<PeriodInputs> {
                       Period period = Period(id, startTime, endTime, title, day,
                           course.id, notification, nid);
 
-                          nid++;
-                          prefs.saveId(nid);
-                
+                      nid++;
+                      prefs.saveId(nid);
+
                       if (notification != -1) {
-                        int total = startTime.hour*60 + startTime.minute;
+                        int total = startTime.hour * 60 + startTime.minute;
                         var day = period.day;
 
                         total -= notification;
 
-                        if(total<0){
-                          total += 23*60+59;
-                          day = (day-1)%7;
+                        if (total < 0) {
+                          total += 23 * 60 + 59;
+                          day = (day - 1) % 7;
                         }
 
                         scheduleWeeklyNotification(
-                            total~/60, (total%60), period, day);
+                            total ~/ 60, (total % 60), period, day);
                       }
 
                       dbperiods.save(period);
@@ -623,7 +629,9 @@ class _PeriodInputsState extends State<PeriodInputs> {
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: Text('Submit', ),
+                  child: Text(
+                    'Submit',
+                  ),
                 ),
               ),
             ),
