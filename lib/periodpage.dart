@@ -1,8 +1,6 @@
 import 'package:Sapptest/PeriodInput.dart';
-import 'package:Sapptest/course.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
 
 import 'period.dart';
 import 'userdata.dart';
@@ -22,11 +20,24 @@ class _PeriodPageState extends State<PeriodPage> {
   Future navigateToPeriodInputPage(context) async {
     Navigator.push(
         context,
-        PageTransition(
-            child: PeriodInput(period: widget.period,),
-            type: PageTransitionType.upToDown,
-            curve: Curves.easeInOut,
-            duration: Duration(milliseconds: 200)));
+        PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => PeriodInput(
+      period: widget.period,
+    ),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(1.0, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  ))
+    ;
   }
 
   @override

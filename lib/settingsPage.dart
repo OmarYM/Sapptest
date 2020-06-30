@@ -1,4 +1,5 @@
 import 'package:Sapptest/userdata.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -14,10 +15,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   void initState() {
-    state = Theme.of(widget.parentContext).brightness == Brightness.light
-        ? true
-        : false;
-
     super.initState();
   }
 
@@ -50,7 +47,55 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
               ),
               onPressed: () {
-                dbperiods.deleteTable();
+                dbperiods.emptyTable();
+              }),
+        ),
+        Divider(),
+        Container(
+          width: 150,
+          child: FlatButton(
+              child: Container(
+                padding: EdgeInsets.all(8),
+                child: Text('Delete All Classes'),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.black),
+                  color: Colors.black12,
+                ),
+              ),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(
+                        'This will delete all courses and all periods!',
+                        textAlign: TextAlign.center,
+                      ),
+                      actions: [
+                        CupertinoButton(
+                            onPressed: () {
+                              Navigator.pop(context, true);
+                            },
+                            child: Text('Cancel',
+                                style: TextStyle(
+                                    color: Theme.of(context).accentColor))),
+                        CupertinoButton(
+                            onPressed: () {
+                              courses.forEach((element) {
+                                deleteCourse(element);
+                              });
+
+                              Navigator.pop(context, true);
+                            },
+                            child: Text(
+                              'Delete',
+                              style: TextStyle(
+                                  color: Theme.of(context).accentColor),
+                            ))
+                      ],
+                    );
+                  },
+                );
               }),
         ),
         Divider(),

@@ -3,7 +3,6 @@ import 'package:Sapptest/coursepage.dart';
 import 'package:Sapptest/userdata.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:page_transition/page_transition.dart';
 
 import 'mainPage.dart';
 
@@ -24,45 +23,56 @@ class CourseSlot extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           elevation: 18,
           color: Colors.grey[800],
-                child: ListTile(
-            onTap: () async {
-              Navigator.push(
-                  context,
-                  PageTransition(
-                      alignment: Alignment.center,
-                      type: PageTransitionType.rightToLeftWithFade,
-                      curve: Curves.easeOut,
-                      duration: Duration(milliseconds: 200),
-                      child: CoursePage(
-                        course: course,
-                        index: index,
-                        refreshLists: function,
-                      ))).then((value) {
-                function();
-              });
-            },
-            contentPadding: EdgeInsets.all(0),
-            //visualDensity: VisualDensity.compact,
-            title: Center(
-                child: Text(
-              course.title,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            )),
-            subtitle: course.courseCode.isNotEmpty
-                ? Column(
-                    children: [
-                      Center(
-                          child: Text(
-                        course.courseCode,
-                        textAlign: TextAlign.center,
-                      )),
-                    ],
-                  )
-                : Container(
-                    height: 0,
-                    width: 0,
-                  ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListTile(
+                onTap: () async {
+                  Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (context, animation, secondaryAnimation) =>
+                            CoursePage(
+                          course: course,
+                          index: index,
+                          refreshLists: function,
+                        ),
+                        transitionsBuilder:
+                            (context, animation, secondaryAnimation, child) {
+                          var begin = Offset(1.0, 0.0);
+                          var end = Offset.zero;
+                          var curve = Curves.ease;
+
+                          var tween = Tween(begin: begin, end: end)
+                              .chain(CurveTween(curve: curve));
+
+                          return SlideTransition(
+                            position: animation.drive(tween),
+                            child: child,
+                          );
+                        },
+                      )).then((value) {
+                    function();
+                  });
+                },
+                contentPadding: EdgeInsets.all(0),
+                //visualDensity: VisualDensity.compact,
+                title: Center(
+                    child: Text(
+                  course.title,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                )),
+                subtitle: course.courseCode.isNotEmpty
+                    ? Column(
+                        children: [
+                          Center(
+                              child: Text(
+                            course.courseCode,
+                            textAlign: TextAlign.center,
+                          )),
+                        ],
+                      )
+                    : null),
           ),
         ),
       ),
@@ -112,6 +122,7 @@ class _CourseListState extends State<CourseList> {
     var width = MediaQuery.of(context).size.width;
 
     return ListView.builder(
+      physics: BouncingScrollPhysics(),
       controller: _controller,
       itemBuilder: (context, index) {
         return index == 0
@@ -126,7 +137,6 @@ class _CourseListState extends State<CourseList> {
                     ),
                   ),
                 ),
-                
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(

@@ -23,7 +23,7 @@ class _CoursePageState extends State<CoursePage> {
 
   @override
   void initState() {
-    coursePeriods = allFromCourse(widget.course.id);
+    coursePeriods = allPeriodsFromCourse(widget.course.id);
     isnext = -1;
     notChecked = true;
     passthrough();
@@ -90,13 +90,14 @@ class _CoursePageState extends State<CoursePage> {
 
   @override
   Widget build(BuildContext context) {
-    coursePeriods = allFromCourse(widget.course.id);
+    coursePeriods = allPeriodsFromCourse(widget.course.id);
 
     if (isnext >= coursePeriods.length) {
       isnext = 0;
     }
 
     return ListView.builder(
+      physics: BouncingScrollPhysics(),
         key: new Key('huh'),
         itemBuilder: (context, index) {
           return  coursePeriods.isEmpty

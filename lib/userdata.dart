@@ -6,13 +6,16 @@ import 'package:Sapptest/sharedPrefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'course.dart';
+import 'grade.dart';
 
 
 DBHelperPeriod dbperiods;
 DBHelperCourse dbcourses;
+DBHelperGrades dbGrades;
 
 List<Period> periods;
 List<Course> courses;
+List<Grade> grades;
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 NotificationAppLaunchDetails notificationAppLaunchDetails;
@@ -54,10 +57,22 @@ List<Period> allFromDay(int day) {
   return result;
 }
 
-List<Period> allFromCourse(String id) {
+List<Period> allPeriodsFromCourse(String id) {
   List<Period> result = [];
 
   periods.forEach((element) {
+    if (id.compareTo(element.courseId) == 0) {
+      result.add(element);
+    }
+  });
+
+  return result;
+}
+
+List<Grade> allGradesFromCourse(String id) {
+  List<Grade> result = [];
+
+  grades.forEach((element) {
     if (id.compareTo(element.courseId) == 0) {
       result.add(element);
     }

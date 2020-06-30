@@ -2,9 +2,7 @@ import 'package:Sapptest/course.dart';
 import 'package:Sapptest/periodslot.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
-
-import 'period.dart';
+import 'gradespage.dart';
 import 'userdata.dart';
 
 class CoursePage extends StatefulWidget {
@@ -17,7 +15,7 @@ class CoursePage extends StatefulWidget {
 
   @override
   _CoursePageState createState() => _CoursePageState();
-}
+} 
 
 class _CoursePageState extends State<CoursePage> {
   int totalHours = 0;
@@ -26,14 +24,53 @@ class _CoursePageState extends State<CoursePage> {
   Future navigateToCoursePeriodsPage(context) async {
     Navigator.push(
             context,
-            PageTransition(
-                child: CoursePeriodList(
+            PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => CoursePeriodList(
                   course: widget.course,
                   index: widget.index,
                 ),
-                type: PageTransitionType.rightToLeftWithFade,
-                curve: Curves.easeInOut,
-                duration: Duration(milliseconds: 200)))
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(1.0, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  ))
+    
+        .then((value) {
+      widget.refreshLists();
+    });
+  }
+
+
+  Future navigateToGradesPage(context) async {
+    Navigator.push(
+            context,
+            PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => GradesPage(
+                  course: widget.course,
+                  index: widget.index,
+                ),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(1.0, 0.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  ))
+    
         .then((value) {
       widget.refreshLists();
     });
@@ -42,7 +79,7 @@ class _CoursePageState extends State<CoursePage> {
   @override
   void initState() {
     super.initState();
-    var coursePeriods = allFromCourse(widget.course.id);
+    var coursePeriods = allPeriodsFromCourse(widget.course.id);
 
     coursePeriods.forEach((element) {
       totalHours += element.getPeriodLength;
@@ -67,6 +104,7 @@ class _CoursePageState extends State<CoursePage> {
                     child: Container(
                       child: Text(
                         widget.course.title,
+                        overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 30, fontWeight: FontWeight.bold),
@@ -149,20 +187,69 @@ class _CoursePageState extends State<CoursePage> {
                 ),
               ),
             ),
+
             Divider(
-              thickness: 3,
+              thickness: 2
             ),
-            ListTile(
-              title: Text('Classes'),
-              onTap: () => navigateToCoursePeriodsPage(context),
+            
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: double.infinity),
+                              child: Material(
+                  elevation: 15,
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(15),
+                              child: InkWell(
+                                borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                                onTap: () => navigateToCoursePeriodsPage(context),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text('Classes', style: TextStyle(fontSize: 20),),
+                    ),
+                  ),
+                ),
+              ),),
+            
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: double.infinity),
+                              child: Material(
+                  elevation: 15,
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(15),
+                              child: InkWell(
+                                borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                                onTap: () => navigateToGradesPage(context),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text('Grades', style: TextStyle(fontSize: 20),),
+                    ),
+                  ),
+                ),
+              ),
             ),
-            Divider(
-              height: 0,
-              thickness: 2,
+            
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ConstrainedBox(
+                    constraints: BoxConstraints(minWidth: double.infinity),
+                              child: Material(
+                  elevation: 15,
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(15),
+                              child: InkWell(
+                                borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text('Upcoming Events', style: TextStyle(fontSize: 20),),
+                    ),
+                  ),
+                ),
+              ),
             ),
-            ListTile(
-              title: Text('Grades'),
-            ),
+            
           ],
         )
 
