@@ -207,7 +207,7 @@ class EmptyMessage extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-          'Seems Empty, Try Adding Some Periods!',
+          'Seems Empty, Try Adding Some Courses!',
         ),
       ),
     );

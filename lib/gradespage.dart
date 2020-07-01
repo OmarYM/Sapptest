@@ -50,58 +50,48 @@ class _GradePageState extends State<GradesPage> {
     ];
   }
 
-  List <double> getGrades() {
+  List<double> getGrades() {
+    List<double> result = [0];
+    double total = 0;
 
-   List<double> result = [0];
-   double total = 0;
+    for (int i = 0; i < courseGrades.length; i++) {
+      double temp = courseGrades[i].grade * courseGrades[i].weight / 100;
+      total += temp;
 
-   for(int i = 0; i < courseGrades.length; i++){
-     double temp = courseGrades[i].grade*courseGrades[i].weight/100;
-     total += temp;
-
-     result.add(total);
-   }
+      result.add(total);
+    }
 
     return result;
   }
 
   refresh(Grade grade, bool delete) {
-
     setState(() {
-
-      if(delete){
+      if (delete) {
         courseGrades.removeWhere((element) => element.id == grade.id);
-
       } else {
-        int index = courseGrades.indexWhere((element) => element.id == grade.id);
+        int index =
+            courseGrades.indexWhere((element) => element.id == grade.id);
         courseGrades.removeAt(index);
         courseGrades.insert(index, grade);
-
       }
 
       gradesTotal = getGrades();
 
-       series = [
-      charts.Series(
-          id: "grades",
-          data: gradesTotal,
-          domainFn: (double grade, _) => _,
-          measureFn: (double grade, _) => grade,
-          colorFn: (double grade, _) =>
-              charts.ColorUtil.fromDartColor(Colors.blue))
-    ];
-     
+      series = [
+        charts.Series(
+            id: "grades",
+            data: gradesTotal,
+            domainFn: (double grade, _) => _,
+            measureFn: (double grade, _) => grade,
+            colorFn: (double grade, _) =>
+                charts.ColorUtil.fromDartColor(Colors.blue))
+      ];
     });
-
   }
-
 
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    
-
-    
 
     return Scaffold(
         appBar: AppBar(
@@ -125,52 +115,60 @@ class _GradePageState extends State<GradesPage> {
           itemBuilder: (context, index) {
             return index == 0
                 ? Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Material(
-                    elevation: 15,
-                    borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                    color: Theme.of(context).dividerColor,
-                                    child: Column(children: [
-                                      Text('Grades Chart', style: TextStyle(fontSize: width/15, fontWeight: FontWeight.bold)),
-                                       Container(
-                        padding: EdgeInsets.all(8),
-                        width: width,
-                        height: 500,
-                        child: charts.LineChart(
-                          series,
-                          animate: true,
-                          primaryMeasureAxis: new charts.NumericAxisSpec(
-                              renderSpec: new charts.GridlineRendererSpec(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Material(
+                        elevation: 15,
+                        borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                        color: Theme.of(context).dividerColor,
+                        child: Column(
+                          children: [
+                            Text('Grades Chart',
+                                style: TextStyle(
+                                    fontSize: width / 15,
+                                    fontWeight: FontWeight.bold)),
+                            Container(
+                                padding: EdgeInsets.all(8),
+                                width: width,
+                                height: 500,
+                                child: charts.LineChart(
+                                  series,
+                                  animate: true,
+                                  primaryMeasureAxis: new charts
+                                          .NumericAxisSpec(
+                                      renderSpec: new charts
+                                              .GridlineRendererSpec(
 
-                                  // Tick and Label styling here.
-                                  labelStyle: new charts.TextStyleSpec(
-                                      fontSize: 18, // size in Pts.
-                                      color: charts.MaterialPalette.white),
+                                          // Tick and Label styling here.
+                                          labelStyle: new charts.TextStyleSpec(
+                                              fontSize: 18, // size in Pts.
+                                              color:
+                                                  charts.MaterialPalette.white),
 
-                                  // Change the line colors to match text color.
-                                  lineStyle: new charts.LineStyleSpec(
-                                      color: charts.MaterialPalette.white))),
+                                          // Change the line colors to match text color.
+                                          lineStyle: new charts.LineStyleSpec(
+                                              color: charts
+                                                  .MaterialPalette.white))),
+                                )),
+                          ],
                         )),
-                                    ],)
-                  ),
-                )
+                  )
                 : index == 1
                     ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Material(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                        elevation: 15,
-                                            child: InkWell(
-                                              borderRadius: BorderRadius.all(Radius.circular(15)),
-
-                                              onTap: () {
+                        padding: const EdgeInsets.all(8.0),
+                        child: Material(
+                          color: Theme.of(context).primaryColor,
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                          elevation: 15,
+                          child: InkWell(
+                            borderRadius: BorderRadius.all(Radius.circular(15)),
+                            onTap: () {
                               showDialog(
                                   context: context,
                                   builder: (context) {
                                     return Dialog(
                                       shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15)),
+                                          borderRadius:
+                                              BorderRadius.circular(15)),
                                       child: Padding(
                                         padding: const EdgeInsets.all(15.0),
                                         child: Form(
@@ -178,13 +176,14 @@ class _GradePageState extends State<GradesPage> {
                                           child: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                Padding(padding: EdgeInsets.all(8)),
+                                                Padding(
+                                                    padding: EdgeInsets.all(8)),
                                                 Text('Title:'),
                                                 TextFormField(
                                                   key: _titleFormKey,
-                                                  decoration: const InputDecoration(
-                                                    hintText:
-                                                        'Enter a Title',
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    hintText: 'Enter a Title',
                                                   ),
                                                   validator: (value) {
                                                     if (value.isEmpty) {
@@ -194,11 +193,13 @@ class _GradePageState extends State<GradesPage> {
                                                     }
                                                   },
                                                 ),
-                                                Padding(padding: EdgeInsets.all(8)),
+                                                Padding(
+                                                    padding: EdgeInsets.all(8)),
                                                 Text('Weight:'),
                                                 TextFormField(
                                                   key: _weightFormKey,
-                                                  decoration: const InputDecoration(
+                                                  decoration:
+                                                      const InputDecoration(
                                                     hintText:
                                                         'Enter as a percentage',
                                                   ),
@@ -208,18 +209,22 @@ class _GradePageState extends State<GradesPage> {
                                                   validator: (value) {
                                                     if (value.isEmpty) {
                                                       return 'Enter a Number';
-                                                    } else if (!isNumeric(value)) {
+                                                    } else if (!isNumeric(
+                                                        value)) {
                                                       return 'This isn\'t a Number!';
-                                                    } else if (double.parse(value) >
+                                                    } else if (double.parse(
+                                                                value) >
                                                             100 ||
-                                                        double.parse(value) < 1) {
+                                                        double.parse(value) <
+                                                            1) {
                                                       return 'Number must be between 1 and 100';
                                                     } else {
                                                       return null;
                                                     }
                                                   },
                                                 ),
-                                                Padding(padding: EdgeInsets.all(8)),
+                                                Padding(
+                                                    padding: EdgeInsets.all(8)),
                                                 RaisedButton(
                                                   onPressed: () {
                                                     if (_formKey.currentState
@@ -228,7 +233,8 @@ class _GradePageState extends State<GradesPage> {
                                                           .currentState.value;
                                                       var weight = double.parse(
                                                           _weightFormKey
-                                                              .currentState.value);
+                                                              .currentState
+                                                              .value);
 
                                                       var id = Uuid().v1();
 
@@ -238,14 +244,16 @@ class _GradePageState extends State<GradesPage> {
                                                           weight,
                                                           widget.course.id,
                                                           title,
-                                                          DateTime.now().millisecondsSinceEpoch);
+                                                          DateTime.now()
+                                                              .millisecondsSinceEpoch);
 
                                                       grades.add(newGrade);
 
                                                       dbGrades.save(newGrade);
 
                                                       setState(() {
-                                                        courseGrades.add(newGrade);
+                                                        courseGrades
+                                                            .add(newGrade);
                                                       });
 
                                                       Navigator.pop(context);
@@ -254,25 +262,27 @@ class _GradePageState extends State<GradesPage> {
                                                   child: Text('Ok'),
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(10),
+                                                        BorderRadius.circular(
+                                                            10),
                                                   ),
                                                   color: Theme.of(context)
                                                       .primaryColor,
                                                 ),
-                                                Padding(padding: EdgeInsets.all(8)),
+                                                Padding(
+                                                    padding: EdgeInsets.all(8)),
                                               ]),
                                         ),
                                       ),
                                     );
                                   });
                             },
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(15.0),
-                                                child: Icon(Icons.add),
-                                              ),
-                                            ),
-                      ),
-                    )
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Icon(Icons.add),
+                            ),
+                          ),
+                        ),
+                      )
                     : GradeSlot(
                         grade: courseGrades[index - 2], refresh: refresh);
           },

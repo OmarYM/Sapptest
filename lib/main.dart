@@ -20,9 +20,9 @@ Future<void> main() async {
   // Note: permissions aren't requested here just to demonstrate that can be done later using the `requestPermissions()` method
   // of the `IOSFlutterLocalNotificationsPlugin` class
   var initializationSettingsIOS = IOSInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
       onDidReceiveLocalNotification:
           (int id, String title, String body, String payload) async {});
           
@@ -57,6 +57,7 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: 
       ThemeData(
+        appBarTheme:  AppBarTheme(brightness: Brightness.dark),
         // This is the theme of your application.
         //
         // Try running your application with "flutter run". You'll see the

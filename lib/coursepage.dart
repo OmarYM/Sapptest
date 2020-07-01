@@ -205,7 +205,7 @@ class _CoursePageState extends State<CoursePage> {
                                 onTap: () => navigateToCoursePeriodsPage(context),
                     child: Padding(
                       padding: const EdgeInsets.all(15.0),
-                      child: Text('Classes', style: TextStyle(fontSize: 20),),
+                      child: Text('Periods', style: TextStyle(fontSize: 20),),
                     ),
                   ),
                 ),
@@ -225,25 +225,6 @@ class _CoursePageState extends State<CoursePage> {
                     child: Padding(
                       padding: const EdgeInsets.all(15.0),
                       child: Text('Grades', style: TextStyle(fontSize: 20),),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: ConstrainedBox(
-                    constraints: BoxConstraints(minWidth: double.infinity),
-                              child: Material(
-                  elevation: 15,
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(15),
-                              child: InkWell(
-                                borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Text('Upcoming Events', style: TextStyle(fontSize: 20),),
                     ),
                   ),
                 ),
