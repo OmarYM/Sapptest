@@ -204,8 +204,8 @@ class _CoursePageState extends State<CoursePage> {
                                 borderRadius: BorderRadius.all(Radius.circular(15.0)),
                                 onTap: () => navigateToCoursePeriodsPage(context),
                     child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Text('Periods', style: TextStyle(fontSize: 20),),
+                      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+                      child: Center(child: Text('Periods', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),)),
                     ),
                   ),
                 ),
@@ -223,8 +223,8 @@ class _CoursePageState extends State<CoursePage> {
                                 borderRadius: BorderRadius.all(Radius.circular(15.0)),
                                 onTap: () => navigateToGradesPage(context),
                     child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Text('Grades', style: TextStyle(fontSize: 20),),
+                      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+                      child: Center(child: Text('Grades', style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),)),
                     ),
                   ),
                 ),

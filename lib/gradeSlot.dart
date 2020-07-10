@@ -75,7 +75,7 @@ class _GradeSlotState extends State<GradeSlot> with TickerProviderStateMixin {
                                     Text('Grade:'),
                                     TextFormField(
                                       key: _gradeFormKey,
-                                      initialValue: newGrade.grade.toString(),
+                                      initialValue: newGrade.grade == 0 ? null : newGrade.grade.toString(),
                                       decoration: const InputDecoration(
                                         hintText: 'Enter grade as a percentage',
                                       ),

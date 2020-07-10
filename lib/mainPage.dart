@@ -1,7 +1,6 @@
 import 'package:Sapptest/PeriodInput.dart';
 import 'package:Sapptest/addbutton.dart';
 import 'package:Sapptest/pagetransitions.dart';
-import 'package:Sapptest/period.dart';
 import 'package:Sapptest/periodslot.dart';
 import 'package:Sapptest/settingsPage.dart';
 import 'package:Sapptest/sharedPrefs.dart';

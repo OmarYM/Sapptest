@@ -240,6 +240,8 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                                                       _breakFormKey
                                                           .currentState.value);
 
+                                                          timerService.reset();
+
                                                   prefs.saveStudyDuration(
                                                       studyDuration);
                                                   prefs.saveBreakDuration(

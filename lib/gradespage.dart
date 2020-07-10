@@ -24,6 +24,8 @@ class _GradePageState extends State<GradesPage> {
   final _weightFormKey = GlobalKey<FormFieldState>();
   List<charts.Series<double, num>> series;
   List<double> gradesTotal = [];
+  double totalGrade;
+  double totalWeight;
 
   bool isNumeric(String s) {
     if (s == null) {
@@ -35,8 +37,9 @@ class _GradePageState extends State<GradesPage> {
   @override
   void initState() {
     super.initState();
+    totalGrade = 0;
+    totalWeight = 0;
     courseGrades = allGradesFromCourse(widget.course.id);
-
     gradesTotal = getGrades();
 
     series = [
@@ -53,13 +56,18 @@ class _GradePageState extends State<GradesPage> {
   List<double> getGrades() {
     List<double> result = [0];
     double total = 0;
+    totalWeight = 0;
 
     for (int i = 0; i < courseGrades.length; i++) {
       double temp = courseGrades[i].grade * courseGrades[i].weight / 100;
       total += temp;
 
+      totalWeight += courseGrades[i].weight;
+
       result.add(total);
     }
+
+    totalGrade = result[result.length - 1];
 
     return result;
   }
@@ -254,6 +262,8 @@ class _GradePageState extends State<GradesPage> {
                                                       setState(() {
                                                         courseGrades
                                                             .add(newGrade);
+
+                                                            gradesTotal = getGrades();
                                                       });
 
                                                       Navigator.pop(context);
@@ -283,10 +293,60 @@ class _GradePageState extends State<GradesPage> {
                           ),
                         ),
                       )
-                    : GradeSlot(
-                        grade: courseGrades[index - 2], refresh: refresh);
+                    : index == 2
+                        ? Column(
+                            children: [
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Total Grade: " +
+                                        totalGrade.toStringAsFixed(5) +
+                                        "%",
+                                    style: TextStyle(
+                                      fontSize: width / 25,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    "Total Weight: " +
+                                        totalWeight.toStringAsFixed(5) +
+                                        "%",
+                                    style: TextStyle(
+                                      fontSize: width / 25,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Divider(thickness: 2),
+                            ],
+                          )
+                        : courseGrades.isEmpty
+                            ? Container(
+                                alignment: Alignment.topCenter,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'Seems Empty, Try Adding Some Grades!',
+                                    
+                                  ),
+                                ),
+                              )
+                            : GradeSlot(
+                                grade: courseGrades[index - 3],
+                                refresh: refresh);
           },
-          itemCount: courseGrades.length + 2,
+          itemCount: courseGrades.isEmpty
+              ? courseGrades.length + 4
+              : courseGrades.length + 3,
         ));
   }
 }

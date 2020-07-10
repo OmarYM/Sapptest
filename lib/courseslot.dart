@@ -66,10 +66,13 @@ class CourseSlot extends StatelessWidget {
                     ? Column(
                         children: [
                           Center(
-                              child: Text(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
                             course.courseCode,
                             textAlign: TextAlign.center,
-                          )),
+                          ),
+                              )),
                         ],
                       )
                     : null),
