@@ -34,7 +34,7 @@ class _SettingsPageState extends State<SettingsPage> {
             child: InkWell(
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
-                  child: Center(child: Text('Delete All Classes', style: TextStyle(fontWeight: FontWeight.bold),)),
+                  child: Center(child: Text('Delete All Periods', style: TextStyle(fontWeight: FontWeight.bold),)),
                 ),
                 borderRadius: BorderRadius.all(Radius.circular(15.0)),
                 onTap: () {
