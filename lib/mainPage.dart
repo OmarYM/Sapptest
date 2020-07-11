@@ -3,7 +3,6 @@ import 'package:Sapptest/addbutton.dart';
 import 'package:Sapptest/pagetransitions.dart';
 import 'package:Sapptest/periodslot.dart';
 import 'package:Sapptest/settingsPage.dart';
-import 'package:Sapptest/sharedPrefs.dart';
 import 'package:Sapptest/studytimerpage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +10,6 @@ import 'package:flutter/rendering.dart';
 import 'courseslot.dart';
 import 'time.dart';
 import 'userdata.dart';
-import 'dbhelper.dart';
 import 'courseinput.dart';
 import 'package:infinity_page_view/infinity_page_view.dart';
 
@@ -35,30 +33,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    prefs = SharedPref();
-
-    prefs.getId().then((value) => nid = value ?? 1);
-
-    upDirection = true;
-    flag = true;
-    click = false;
-    click1 = false;
-    appear = true;
-    disappear = true;
-
     today = DateTime.now().weekday;
     page = InfinityPageController(initialPage: 0);
-
-    dbperiods = DBHelperPeriod();
-    dbcourses = DBHelperCourse();
-    dbGrades = DBHelperGrades();
-
-    periods = [];
-    courses = [];
-    dbGrades.getGrades().then((value) => grades = value);
-
-    refreshLists();
-
     super.initState();
   }
 

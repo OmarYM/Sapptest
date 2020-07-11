@@ -137,7 +137,7 @@ class _GradePageState extends State<GradesPage> {
                             Container(
                                 padding: EdgeInsets.all(8),
                                 width: width,
-                                height: 500,
+                                height: 350,
                                 child: charts.LineChart(
                                   series,
                                   animate: true,
