@@ -1,9 +1,9 @@
-import 'package:Sapptest/PeriodInput.dart';
-import 'package:Sapptest/addbutton.dart';
-import 'package:Sapptest/pagetransitions.dart';
-import 'package:Sapptest/periodslot.dart';
-import 'package:Sapptest/settingsPage.dart';
-import 'package:Sapptest/studytimerpage.dart';
+import 'PeriodInput.dart';
+import 'addbutton.dart';
+import 'pagetransitions.dart';
+import 'periodslot.dart';
+import 'settingsPage.dart';
+import 'studytimerpage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -134,33 +134,32 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   SafeArea(
                     child: Align(
                       alignment: Alignment.topCenter,
-                      child: SingleChildScrollView(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.all(10.0),
-                                child: AddButton(
-                                  route: navigateToCourseInputPage,
-                                  title: 'Course',
-                                ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: AddButton(
+                                route: navigateToCourseInputPage,
+                                title: '+ Course',
                               ),
-                              Padding(
-                                padding: EdgeInsets.all(10.0),
-                                child: AddButton(
-                                  route: navigateToPeriodInputPage,
-                                  title: 'Period',
-                                ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: AddButton(
+                                route: navigateToPeriodInputPage,
+                                title: '+ Period',
                               ),
-                              Padding(
-                                padding: EdgeInsets.all(10.0),
-                                child: AddButton(
-                                  route: navigateToSettingsPage,
-                                  title: 'Settings',
-                                ),
+                            ),
+                            Expanded(child: Container()),
+                            Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: AddButton(
+                                route: navigateToSettingsPage,
+                                title: 'Settings',
                               ),
-                            ]),
-                      ),
+                            ),
+                          ]),
                     ),
                   ),
                 ],

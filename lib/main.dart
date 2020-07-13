@@ -1,5 +1,5 @@
-import 'package:Sapptest/sharedPrefs.dart';
-import 'package:Sapptest/timerservice.dart';
+import 'sharedPrefs.dart';
+import 'timerservice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -52,7 +52,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         showPerformanceOverlay: false,
-        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        title: 'Schedule Time',
         theme: ThemeData(
           appBarTheme: AppBarTheme(brightness: Brightness.dark),
           // This is the theme of your application.
@@ -96,7 +97,7 @@ class _SplashScreenState extends State<SplashScreen>
 
       dbcourses.getCourses().then((value) {
         courses = value;
-        Navigator.pushReplacement(context,
+         Navigator.pushReplacement(context,
             SlideBottomUpRoute(enterWidget: MainPage(), curve: Curves.ease));
       });
     });
@@ -145,11 +146,12 @@ class _SplashScreenState extends State<SplashScreen>
     });
 
     return Scaffold(
+      backgroundColor: Colors.grey[600],
       body: Center(
         child: ScaleTransition(
           scale: Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.ease)).animate(_controller),
                   child: RotationTransition(
-            turns: Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.bounceOut)).animate(_controller),
+            turns: Tween(begin: 0.5, end: 1.0).chain(CurveTween(curve: Curves.bounceOut)).animate(_controller),
             child: Image.asset(
               'graphics/icon/Icon_big.png',
               width: 200,

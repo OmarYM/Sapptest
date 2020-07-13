@@ -1,9 +1,9 @@
-import 'dart:math';
 
-import 'package:Sapptest/notifications.dart';
-import 'package:Sapptest/shapes.dart';
-import 'package:Sapptest/timerservice.dart';
-import 'package:Sapptest/userdata.dart';
+import 'dart:math';
+import 'notifications.dart';
+import 'shapes.dart';
+import 'timerservice.dart';
+import 'userdata.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vibration/vibration.dart';
@@ -49,7 +49,7 @@ class _StudyTimerPageState extends State<StudyTimerPage>
   void initState() {
     prefs.getStudyDuration().then((value) => studyDuration = value ?? 25);
     prefs.getBreakDuration().then((value) => breakDuration = value ?? 5);
-    isStudyTimer = true;
+    prefs.getIsStudy().then((value) => isStudyTimer = value ?? true);
     controller =
         AnimationController(duration: Duration(seconds: 2), vsync: this);
 
@@ -71,18 +71,17 @@ class _StudyTimerPageState extends State<StudyTimerPage>
     return AnimatedBuilder(
         animation: controller, // listen to ChangeNotifier
         builder: (context, child) {
-
           var position = controller.value * width / 150 +
-                        diameter -
-                        ((isStudyTimer
-                                ? (currentsecond / (studyDuration * 60)) *
-                                    (diameter * 1.14)
-                                : (currentsecond / (breakDuration * 60)) *
-                                    (diameter * 1.14)) ??
-                            0);
+              diameter -
+              ((isStudyTimer
+                      ? (currentsecond / (studyDuration * 60)) *
+                          (diameter * 1.14)
+                      : (currentsecond / (breakDuration * 60)) *
+                          (diameter * 1.14)) ??
+                  0);
 
-          timeLeft = timer((isStudyTimer ? studyDuration : breakDuration )*60 - timerService.currentDuration.inSeconds);
-
+          timeLeft = timer((isStudyTimer ? studyDuration : breakDuration) * 60 -
+              timerService.currentDuration.inSeconds);
 
           if (timerService.isRunning &&
               isStudyTimer &&
@@ -111,7 +110,9 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                     duration: Duration(milliseconds: 1000),
                     curve: Curves.linear,
                     left: -width / 2 + controller.value * width / 10,
-                    top: position > diameter-width/15 ? diameter-width/15 : position < -width/20 ? -width/10 : position,
+                    top: position > diameter - width / 15
+                        ? diameter - width / 15
+                        : position < -width / 20 ? -width / 10 : position,
                     child: Stack(
                       children: [
                         Container(
@@ -169,8 +170,7 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                               builder: (context) {
                                 return Dialog(
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15)
-                                  ),
+                                      borderRadius: BorderRadius.circular(15)),
                                   child: Padding(
                                     padding: const EdgeInsets.all(15.0),
                                     child: Form(
@@ -196,7 +196,9 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                                                   return 'Enter a Number';
                                                 } else if (!isNumeric(value)) {
                                                   return 'This isn\'t a Number!';
-                                                } else if (double.parse(value) > 9999 || double.parse(value) < 1) {
+                                                } else if (double.parse(value) >
+                                                        9999 ||
+                                                    double.parse(value) < 1) {
                                                   return 'Number must be between 1 and 9999';
                                                 } else {
                                                   return null;
@@ -221,7 +223,9 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                                                   return 'Enter a Number';
                                                 } else if (!isNumeric(value)) {
                                                   return 'This isn\'t a Number!';
-                                                } else if (double.parse(value) > 9999 || double.parse(value) < 1) {
+                                                } else if (double.parse(value) >
+                                                        9999 ||
+                                                    double.parse(value) < 1) {
                                                   return 'Number must be between 1 and 9999';
                                                 } else {
                                                   return null;
@@ -240,7 +244,8 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                                                       _breakFormKey
                                                           .currentState.value);
 
-                                                          timerService.reset();
+                                                  timerService.reset();
+                                                  deleteNotification(0);
 
                                                   prefs.saveStudyDuration(
                                                       studyDuration);
@@ -267,9 +272,11 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                         })
                   ],
                 ),
-
-                Text(timeLeft, style: TextStyle(fontSize: width/10, fontWeight: FontWeight.bold),),
-
+                Text(
+                  timeLeft,
+                  style: TextStyle(
+                      fontSize: width / 10, fontWeight: FontWeight.bold),
+                ),
                 Padding(padding: EdgeInsets.only(top: 30)),
                 clock,
                 Padding(padding: EdgeInsets.only(top: 30)),
@@ -278,14 +285,19 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                   children: [
                     Flexible(child: Container(), flex: 1),
                     RaisedButton(
-                      onPressed: (!timerService.isRunning || timerService.currentDuration.inSeconds == 0)
+                      onPressed: (!timerService.isRunning &&
+                              timerService.currentDuration.inSeconds == 0)
                           ? () {
                               timerService.start();
                               displayTimerNotification(isStudyTimer,
                                   isStudyTimer ? studyDuration : breakDuration);
                             }
-                          : timerService.reset,
-                      child: Text((!timerService.isRunning && timerService.currentDuration.inSeconds == 0)
+                          : () {
+                              timerService.reset();
+                              deleteNotification(0);
+                            },
+                      child: Text((!timerService.isRunning &&
+                              timerService.currentDuration.inSeconds == 0)
                           ? 'Start'
                           : 'Reset'),
                       shape: RoundedRectangleBorder(
@@ -298,6 +310,7 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                       onPressed: () {
                         setState(() {
                           isStudyTimer = !isStudyTimer;
+                          prefs.saveisStudy(isStudyTimer);
                           timerService.reset();
                           timerService.start();
                           displayTimerNotification(isStudyTimer,
@@ -320,20 +333,15 @@ class _StudyTimerPageState extends State<StudyTimerPage>
         });
   }
 
-  String timer(int time){
+  String timer(int time) {
+    if (time != null && time > 0) {
+      var minutes = (time ~/ 60).toString();
+      var seconds = (time % 60).toString().padLeft(2, '0');
 
-    if(time != null && time > 0){
-
-    var minutes = (time~/60).toString();
-    var seconds = (time%60).toString().padLeft(2, '0');
-
-    return minutes + ':' + seconds;
-
+      return minutes + ':' + seconds;
     } else {
-
       return '0:00';
     }
-
   }
 
   @override

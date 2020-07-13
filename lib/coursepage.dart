@@ -1,5 +1,5 @@
-import 'package:Sapptest/course.dart';
-import 'package:Sapptest/periodslot.dart';
+import 'course.dart';
+import 'periodslot.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'gradespage.dart';

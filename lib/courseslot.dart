@@ -1,6 +1,6 @@
-import 'package:Sapptest/course.dart';
-import 'package:Sapptest/coursepage.dart';
-import 'package:Sapptest/userdata.dart';
+import 'course.dart';
+import 'coursepage.dart';
+import 'userdata.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 

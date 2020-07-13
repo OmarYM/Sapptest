@@ -1,4 +1,4 @@
-import 'package:Sapptest/userdata.dart';
+import 'userdata.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -24,7 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
       appBar: AppBar(
         title: Text("Settings"),
       ),
-      body: ListView(children: [
+      body: Column(children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Material(
@@ -103,9 +103,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                       color: Theme.of(context).accentColor))),
                           CupertinoButton(
                               onPressed: () {
+
                                 courses.forEach((element) {
                                   deleteCourse(element);
                                 });
+
+                                courses = [];
+                                periods = [];
 
                                 Navigator.pop(context, true);
                               },
@@ -121,7 +125,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 }),
           ),
         ),
-        Divider(),
+        Expanded(child: Container(),),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Material(
@@ -139,7 +143,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     context: context,
                     applicationIcon: Image.asset('graphics/icon/Icon_big.png', width: 100, height: 100,),
                     applicationName: 'Schedule Time',
-                    applicationVersion: '0.1.0'
+                    applicationVersion: '0.1.0',
+                    children: [Text('Developed by Omar Mohamud')]
                     
                   );
                 }),

@@ -1,13 +1,12 @@
 import 'dart:ui';
 
-import 'package:Sapptest/dbhelper.dart';
-import 'package:Sapptest/period.dart';
-import 'package:Sapptest/sharedPrefs.dart';
+import 'dbhelper.dart';
+import 'period.dart';
+import 'sharedPrefs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'course.dart';
 import 'grade.dart';
-
 
 DBHelperPeriod dbperiods;
 DBHelperCourse dbcourses;
@@ -24,7 +23,7 @@ bool isdark(BuildContext context) {
   return MediaQuery.of(context).platformBrightness == Brightness.dark;
 }
 
-Color oppositeAccent(BuildContext context){
+Color oppositeAccent(BuildContext context) {
   return isdark(context) ? Colors.red[500] : Colors.tealAccent[200];
 }
 
@@ -81,60 +80,56 @@ List<Grade> allGradesFromCourse(String id) {
   return result;
 }
 
-void deleteCourse(Course course){
+void deleteCourse(Course course) {
   periods.forEach((element) {
     if (course.id.compareTo(element.courseId) == 0) {
-      dbperiods.delete(element.id);  
-    }   
+      dbperiods.delete(element.id);
+    }
   });
 
   dbcourses.delete(course.id);
-  courses.remove(course);
-   
 }
 
-String getCourseTitle(String id){
-
+String getCourseTitle(String id) {
   String result;
 
-  courses.forEach((element) {if(element.id == id){
-    result = element.title;
-  }});
+  courses.forEach((element) {
+    if (element.id == id) {
+      result = element.title;
+    }
+  });
 
   return result ?? '';
 }
 
-
-
-bool upDirection, flag ;
+bool upDirection, flag;
 
 Brightness brightness;
 
+String getDayOfTheWeek(int day) {
+  switch (day) {
+    case 0:
+      return 'Monday';
 
- String getDayOfTheWeek(int day) {
-    switch (day) {
-      case 0:
-        return 'Monday';
+    case 1:
+      return 'Tuesday';
 
-      case 1:
-        return 'Tuesday';
+    case 2:
+      return 'Wednesday';
 
-      case 2:
-        return 'Wednesday';
+    case 3:
+      return 'Thursday';
 
-      case 3:
-        return 'Thursday';
+    case 4:
+      return 'Friday';
 
-      case 4:
-        return 'Friday';
+    case 5:
+      return 'Saturday';
 
-      case 5:
-        return 'Saturday';
+    case 6:
+      return 'Sunday';
 
-      case 6:
-        return 'Sunday';
-
-      default:
-        return 'Invalid -getDayOfTheWeek Method-';
-    }
+    default:
+      return 'Invalid -getDayOfTheWeek Method-';
   }
+}

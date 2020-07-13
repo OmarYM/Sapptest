@@ -1,5 +1,5 @@
-import 'package:Sapptest/period.dart';
-import 'package:Sapptest/userdata.dart';
+import 'period.dart';
+import 'userdata.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 Future<void> scheduleWeeklyNotification(
