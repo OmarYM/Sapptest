@@ -1,4 +1,4 @@
-package com.example.sapptest
+package com.Fidapps.ScheduleTime
 
 import io.flutter.embedding.android.FlutterActivity
 

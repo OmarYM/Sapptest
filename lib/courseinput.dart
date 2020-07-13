@@ -1,5 +1,5 @@
-import 'package:Sapptest/course.dart';
-import 'package:Sapptest/userdata.dart';
+import 'course.dart';
+import 'userdata.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 

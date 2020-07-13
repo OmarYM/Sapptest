@@ -1,7 +1,7 @@
-import 'package:Sapptest/course.dart';
-import 'package:Sapptest/notifications.dart';
-import 'package:Sapptest/period.dart';
-import 'package:Sapptest/userdata.dart';
+import 'course.dart';
+import 'notifications.dart';
+import 'period.dart';
+import 'userdata.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:uuid/uuid.dart';

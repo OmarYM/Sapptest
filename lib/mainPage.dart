@@ -1,18 +1,15 @@
-import 'package:Sapptest/PeriodInput.dart';
-import 'package:Sapptest/addbutton.dart';
-import 'package:Sapptest/pagetransitions.dart';
-import 'package:Sapptest/period.dart';
-import 'package:Sapptest/periodslot.dart';
-import 'package:Sapptest/settingsPage.dart';
-import 'package:Sapptest/sharedPrefs.dart';
-import 'package:Sapptest/studytimerpage.dart';
+import 'PeriodInput.dart';
+import 'addbutton.dart';
+import 'pagetransitions.dart';
+import 'periodslot.dart';
+import 'settingsPage.dart';
+import 'studytimerpage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'courseslot.dart';
 import 'time.dart';
 import 'userdata.dart';
-import 'dbhelper.dart';
 import 'courseinput.dart';
 import 'package:infinity_page_view/infinity_page_view.dart';
 
@@ -36,30 +33,8 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    prefs = SharedPref();
-
-    prefs.getId().then((value) => nid = value ?? 1);
-
-    upDirection = true;
-    flag = true;
-    click = false;
-    click1 = false;
-    appear = true;
-    disappear = true;
-
     today = DateTime.now().weekday;
     page = InfinityPageController(initialPage: 0);
-
-    dbperiods = DBHelperPeriod();
-    dbcourses = DBHelperCourse();
-    dbGrades = DBHelperGrades();
-
-    periods = [];
-    courses = [];
-    dbGrades.getGrades().then((value) => grades = value);
-
-    refreshLists();
-
     super.initState();
   }
 
@@ -159,33 +134,32 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
                   SafeArea(
                     child: Align(
                       alignment: Alignment.topCenter,
-                      child: SingleChildScrollView(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.all(10.0),
-                                child: AddButton(
-                                  route: navigateToCourseInputPage,
-                                  title: 'Course',
-                                ),
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: AddButton(
+                                route: navigateToCourseInputPage,
+                                title: '+ Course',
                               ),
-                              Padding(
-                                padding: EdgeInsets.all(10.0),
-                                child: AddButton(
-                                  route: navigateToPeriodInputPage,
-                                  title: 'Period',
-                                ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: AddButton(
+                                route: navigateToPeriodInputPage,
+                                title: '+ Period',
                               ),
-                              Padding(
-                                padding: EdgeInsets.all(10.0),
-                                child: AddButton(
-                                  route: navigateToSettingsPage,
-                                  title: 'Settings',
-                                ),
+                            ),
+                            Expanded(child: Container()),
+                            Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: AddButton(
+                                route: navigateToSettingsPage,
+                                title: 'Settings',
                               ),
-                            ]),
-                      ),
+                            ),
+                          ]),
                     ),
                   ),
                 ],

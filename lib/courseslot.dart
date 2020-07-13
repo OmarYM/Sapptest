@@ -1,6 +1,6 @@
-import 'package:Sapptest/course.dart';
-import 'package:Sapptest/coursepage.dart';
-import 'package:Sapptest/userdata.dart';
+import 'course.dart';
+import 'coursepage.dart';
+import 'userdata.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
@@ -66,10 +66,13 @@ class CourseSlot extends StatelessWidget {
                     ? Column(
                         children: [
                           Center(
-                              child: Text(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
                             course.courseCode,
                             textAlign: TextAlign.center,
-                          )),
+                          ),
+                              )),
                         ],
                       )
                     : null),

@@ -1,14 +1,14 @@
-import 'package:Sapptest/timerservice.dart';
+import 'sharedPrefs.dart';
+import 'timerservice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dbhelper.dart';
 import 'mainPage.dart';
+import 'pagetransitions.dart';
 import 'userdata.dart';
 
-
-
 Future<void> main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
 
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -25,7 +25,7 @@ Future<void> main() async {
       requestSoundPermission: true,
       onDidReceiveLocalNotification:
           (int id, String title, String body, String payload) async {});
-          
+
   var initializationSettings = InitializationSettings(
       initializationSettingsAndroid, initializationSettingsIOS);
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
@@ -33,56 +33,136 @@ Future<void> main() async {
     if (payload != null) {
       debugPrint('notification payload: ' + payload);
     }
-  });  
+  });
 
   final timerService = TimerService();
   runApp(
-    TimerServiceProvider( // provide timer service to all widgets of your app
+    TimerServiceProvider(
+      // provide timer service to all widgets of your app
       service: timerService,
       child: MyApp(),
     ),
-    );
+  );
 }
-
-
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
-    
+
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
-      showPerformanceOverlay: false,
-      title: 'Flutter Demo',
-      theme: 
-      ThemeData(
-        appBarTheme:  AppBarTheme(brightness: Brightness.dark),
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        //primarySwatch: Colors.deepPurple,
-        brightness: Brightness.dark,
-        //accentColor: Colors.red,
-        tabBarTheme: TabBarTheme(labelPadding: EdgeInsets.zero),
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ), 
-      darkTheme: ThemeData.dark(),
-
-      home: MainPage()//MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+        showPerformanceOverlay: false,
+        debugShowCheckedModeBanner: false,
+        title: 'Schedule Time',
+        theme: ThemeData(
+          appBarTheme: AppBarTheme(brightness: Brightness.dark),
+          // This is the theme of your application.
+          //
+          // Try running your application with "flutter run". You'll see the
+          // application has a blue toolbar. Then, without quitting the app, try
+          // changing the primarySwatch below to Colors.green and then invoke
+          // "hot reload" (press "r" in the console where you ran "flutter run",
+          // or simply save your changes to "hot reload" in a Flutter IDE).
+          // Notice that the counter didn't reset back to zero; the application
+          // is not restarted.
+          //primarySwatch: Colors.deepPurple,
+          brightness: Brightness.dark,
+          //accentColor: Colors.red,
+          tabBarTheme: TabBarTheme(labelPadding: EdgeInsets.zero),
+          // This makes the visual density adapt to the platform that you run
+          // the app on. For desktop platforms, the controls will be smaller and
+          // closer together (more dense) than on mobile platforms.
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        darkTheme: ThemeData.dark(),
+        home: SplashScreen() //MyHomePage(title: 'Flutter Demo Home Page'),
+        );
   }
 }
 
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key key}) : super(key: key);
+
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen>
+    with TickerProviderStateMixin {
+  AnimationController _controller;
+
+  void refreshLists() {
+    dbperiods.getPeriods().then((value) {
+      periods = value;
+
+      dbcourses.getCourses().then((value) {
+        courses = value;
+         Navigator.pushReplacement(context,
+            SlideBottomUpRoute(enterWidget: MainPage(), curve: Curves.ease));
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+
+    _controller.forward();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Future.delayed(Duration(milliseconds: 800), () {
+      prefs = SharedPref();
+
+      prefs.getId().then((value) => nid = value ?? 1);
+
+      upDirection = true;
+      flag = true;
+      click = false;
+      click1 = false;
+      appear = true;
+      disappear = true;
+
+      dbperiods = DBHelperPeriod();
+      dbcourses = DBHelperCourse();
+      dbGrades = DBHelperGrades();
+
+      periods = [];
+      courses = [];
+      dbGrades.getGrades().then((value) => grades = value);
+
+      refreshLists();
+    });
+
+    return Scaffold(
+      backgroundColor: Colors.grey[600],
+      body: Center(
+        child: ScaleTransition(
+          scale: Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.ease)).animate(_controller),
+                  child: RotationTransition(
+            turns: Tween(begin: 0.5, end: 1.0).chain(CurveTween(curve: Curves.bounceOut)).animate(_controller),
+            child: Image.asset(
+              'graphics/icon/Icon_big.png',
+              width: 200,
+              height: 200,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 /*
 

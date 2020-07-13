@@ -52,4 +52,17 @@ class SharedPref {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setInt('bduration', bduration);
   }
+
+  Future<bool> getIsStudy() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    //Return int
+    bool isStudy = prefs.getBool('isStudy');
+    return isStudy;
+  }
+
+  saveisStudy(bool isStudy) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('isStudy', isStudy);
+  }
+
 }

@@ -1,4 +1,4 @@
-import 'package:Sapptest/course.dart';
+import 'course.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

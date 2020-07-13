@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:Sapptest/PeriodInput.dart';
-import 'package:Sapptest/mainPage.dart';
-import 'package:Sapptest/userdata.dart';
+import 'PeriodInput.dart';
+import 'mainPage.dart';
+import 'userdata.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'course.dart';
@@ -36,26 +36,25 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
 
   Future navigateToPeriodPage(context) async {
     Navigator.push(
-            context,
-            PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => PeriodInput(
-      period: widget.period,
-    ),
-    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-      var begin = Offset(1.0, 0.0);
-      var end = Offset.zero;
-      var curve = Curves.ease;
+        context,
+        PageRouteBuilder(
+          pageBuilder: (context, animation, secondaryAnimation) => PeriodInput(
+            period: widget.period,
+          ),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            var begin = Offset(1.0, 0.0);
+            var end = Offset.zero;
+            var curve = Curves.ease;
 
-      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+            var tween =
+                Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
-      return SlideTransition(
-        position: animation.drive(tween),
-        child: child,
-      );
-    },
-  ))
-    
-        .then((value) {
+            return SlideTransition(
+              position: animation.drive(tween),
+              child: child,
+            );
+          },
+        )).then((value) {
       widget.refresh();
       setState(() {
         selected = false;
@@ -120,13 +119,12 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
             child: Container(
               width: widget.isNext ? width * 0.7 : width,
               child: Text(
-              widget.title,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headline6.copyWith(
-              
-                    fontSize: 20,
-                  ),
-            ),
+                widget.title,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline6.copyWith(
+                      fontSize: 20,
+                    ),
+              ),
             )),
       ),
       periodTitle,
@@ -193,8 +191,7 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                                 flex: 2,
                                 child: Container(
                                   child: Padding(
-                                    padding:
-                                        const EdgeInsets.only(left: 20.0),
+                                    padding: const EdgeInsets.only(left: 20.0),
                                     child: IconButton(
                                         icon: Icon(
                                           Icons.edit,
@@ -208,7 +205,9 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                               Flexible(
                                 flex: 2,
                                 child: Padding(
-                                  padding: const EdgeInsets.only(left: 8.0,),
+                                  padding: const EdgeInsets.only(
+                                    left: 8.0,
+                                  ),
                                   child: IconButton(
                                       icon: Icon(
                                         Icons.delete,
@@ -309,6 +308,68 @@ class _PeriodListState extends State<PeriodList> {
     super.initState();
   }
 
+  Widget dayIndicator() {
+    List<double> diameters = List.filled(7, 10);
+
+    diameters[(widget.day - 1) % 7] = 25;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          margin: EdgeInsets.all(1),
+          width: diameters[0],
+          height: diameters[0],
+          decoration:
+              BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        ),
+        Container(
+          margin: EdgeInsets.all(1),
+          width: diameters[1],
+          height: diameters[1],
+          decoration:
+              BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        ),
+        Container(
+          margin: EdgeInsets.all(1),
+          width: diameters[2],
+          height: diameters[2],
+          decoration:
+              BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        ),
+        Container(
+          margin: EdgeInsets.all(1),
+          width: diameters[3],
+          height: diameters[3],
+          decoration:
+              BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        ),
+        Container(
+          margin: EdgeInsets.all(1),
+          width: diameters[4],
+          height: diameters[4],
+          decoration:
+              BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        ),
+        Container(
+          margin: EdgeInsets.all(1),
+          width: diameters[5],
+          height: diameters[5],
+          decoration:
+              BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        ),
+        Container(
+          margin: EdgeInsets.all(1),
+          width: diameters[6],
+          height: diameters[6],
+          decoration:
+              BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+        ),
+      ],
+    );
+  }
+
   double toDouble(TimeOfDay myTime) => myTime.hour + myTime.minute / 60.0;
 
   bool isnext(index) {
@@ -334,32 +395,43 @@ class _PeriodListState extends State<PeriodList> {
   Widget build(BuildContext context) {
     currentPeriods = allFromDay((widget.day - 1) % 7);
 
-    return ListView.builder(
-      physics: BouncingScrollPhysics(),
-      controller: _controller,
-      itemBuilder: (context, index) {
-        return index == 0
-            ? Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text(
-                    getDayOfTheWeek((widget.day - 1) % 7),
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              )
-            : currentPeriods.isEmpty
-                ? EmptyMessage()
-                : PeriodSlot(
-                    period: currentPeriods[index - 1],
-                    title: currentPeriods[index - 1].courseTitle,
-                    subtitle: currentPeriods[index - 1].title,
-                    index: index,
-                    isNext: isnext(index - 1),
-                    refresh: widget.refresh,
-                  );
-      },
-      itemCount: currentPeriods.isEmpty ? 2 : currentPeriods.length + 1,
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Material(
+        elevation: 15,
+        color: Colors.grey[750],
+        borderRadius: BorderRadius.circular(10),
+        child: ListView.builder(
+          physics: BouncingScrollPhysics(),
+          controller: _controller,
+          itemBuilder: (context, index) {
+            return index == 0
+                ? dayIndicator()
+                : index == 1
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            getDayOfTheWeek((widget.day - 1) % 7),
+                            style: TextStyle(
+                                fontSize: 30, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
+                    : currentPeriods.isEmpty
+                        ? EmptyMessage()
+                        : PeriodSlot(
+                            period: currentPeriods[index - 2],
+                            title: currentPeriods[index - 2].courseTitle,
+                            subtitle: currentPeriods[index - 2].title,
+                            index: index,
+                            isNext: isnext(index - 2),
+                            refresh: widget.refresh,
+                          );
+          },
+          itemCount: currentPeriods.isEmpty ? 3 : currentPeriods.length + 2,
+        ),
+      ),
     );
   }
 
