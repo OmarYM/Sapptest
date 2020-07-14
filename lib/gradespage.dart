@@ -26,6 +26,7 @@ class _GradePageState extends State<GradesPage> {
   List<double> gradesTotal = [];
   double totalGrade;
   double totalWeight;
+  final _gradeFormKey = GlobalKey<FormFieldState>();
 
   bool isNumeric(String s) {
     if (s == null) {
@@ -203,6 +204,36 @@ class _GradePageState extends State<GradesPage> {
                                                 ),
                                                 Padding(
                                                     padding: EdgeInsets.all(8)),
+                                                Text('Grade:'),
+                                                TextFormField(
+                                                  key: _gradeFormKey,
+                                                  keyboardType: TextInputType
+                                                      .numberWithOptions(
+                                                          decimal: true),
+                                                  decoration:
+                                                      const InputDecoration(
+                                                    hintText:
+                                                        'Enter grade as a percentage',
+                                                  ),
+                                                  validator: (value) {
+                                                    if (value.isEmpty) {
+                                                      return 'Enter a grade';
+                                                    } else if (!isNumeric(
+                                                        value)) {
+                                                      return 'This isn\'t a Number!';
+                                                    } else if (double.parse(
+                                                                value) >
+                                                            100 ||
+                                                        double.parse(value) <
+                                                            1) {
+                                                      return 'Number must be between 1 and 100';
+                                                    } else {
+                                                      return null;
+                                                    }
+                                                  },
+                                                ),
+                                                Padding(
+                                                    padding: EdgeInsets.all(8)),
                                                 Text('Weight:'),
                                                 TextFormField(
                                                   key: _weightFormKey,
@@ -239,6 +270,10 @@ class _GradePageState extends State<GradesPage> {
                                                         .validate()) {
                                                       var title = _titleFormKey
                                                           .currentState.value;
+                                                      var grade = double.parse(
+                                                          _gradeFormKey
+                                                              .currentState
+                                                              .value);
                                                       var weight = double.parse(
                                                           _weightFormKey
                                                               .currentState
@@ -248,7 +283,7 @@ class _GradePageState extends State<GradesPage> {
 
                                                       Grade newGrade = Grade(
                                                           id,
-                                                          0,
+                                                          grade,
                                                           weight,
                                                           widget.course.id,
                                                           title,
@@ -263,7 +298,8 @@ class _GradePageState extends State<GradesPage> {
                                                         courseGrades
                                                             .add(newGrade);
 
-                                                            gradesTotal = getGrades();
+                                                        gradesTotal =
+                                                            getGrades();
                                                       });
 
                                                       Navigator.pop(context);
@@ -336,7 +372,6 @@ class _GradePageState extends State<GradesPage> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
                                     'Seems Empty, Try Adding Some Grades!',
-                                    
                                   ),
                                 ),
                               )

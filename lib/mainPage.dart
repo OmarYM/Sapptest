@@ -169,35 +169,37 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin {
               thickness: 2,
               height: 0,
             ),
-            Container(
-              width: MediaQuery.of(context).copyWith().size.width,
-              child: Row(
-                children: [
-                  Flexible(
-                    fit: FlexFit.tight,
-                    child: TabBar(
-                        labelColor: Colors.grey[50],
-                        labelPadding: EdgeInsets.zero,
-                        tabs: [
-                          Tab(
-                              icon: Icon(
-                            Icons.home,
-                          )),
-                          Tab(
-                              icon: Icon(
-                            Icons.school,
-                          )),
-                          Tab(
-                              icon: Icon(
-                            Icons.timer,
-                          )),
-                          Tab(
-                              icon: Icon(
-                            Icons.add,
-                          )),
-                        ]),
-                  ),
-                ],
+            SafeArea(
+                          child: Container(
+                width: MediaQuery.of(context).copyWith().size.width,
+                child: Row(
+                  children: [
+                    Flexible(
+                      fit: FlexFit.tight,
+                      child: TabBar(
+                          labelColor: Colors.grey[50],
+                          labelPadding: EdgeInsets.zero,
+                          tabs: [
+                            Tab(
+                                icon: Icon(
+                              Icons.home,
+                            )),
+                            Tab(
+                                icon: Icon(
+                              Icons.school,
+                            )),
+                            Tab(
+                                icon: Icon(
+                              Icons.timer,
+                            )),
+                            Tab(
+                                icon: Icon(
+                              Icons.add,
+                            )),
+                          ]),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

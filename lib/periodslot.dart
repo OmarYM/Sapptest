@@ -244,7 +244,7 @@ class _PeriodSlotState extends State<PeriodSlot> with TickerProviderStateMixin {
                 AnimatedPositioned(
                   curve: Curves.bounceOut,
                   top: 20,
-                  right: selected ? width * 1 : width * 0.8,
+                  right: selected ? width * 1 : width * 0.75,
                   width: width * 0.2,
                   child: widget.isNext
                       ? Icon(

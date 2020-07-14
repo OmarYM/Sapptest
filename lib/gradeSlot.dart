@@ -79,6 +79,9 @@ class _GradeSlotState extends State<GradeSlot> with TickerProviderStateMixin {
                                       decoration: const InputDecoration(
                                         hintText: 'Enter grade as a percentage',
                                       ),
+                                      keyboardType: TextInputType
+                                                      .numberWithOptions(
+                                                          decimal: true),
                                       validator: (value) {
                                         if (value.isEmpty) {
                                           return 'Enter a grade';

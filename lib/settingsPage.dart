@@ -141,10 +141,10 @@ class _SettingsPageState extends State<SettingsPage> {
                 onTap: () {
                   showAboutDialog(
                     context: context,
-                    applicationIcon: Image.asset('graphics/icon/Icon_big.png', width: 100, height: 100,),
+                    applicationIcon: Image.asset('graphics/icon/Icon_big.png', width: 75, height: 75,),
                     applicationName: 'Schedule Time',
-                    applicationVersion: '0.1.0',
-                    children: [Text('Developed by Omar Mohamud')]
+                    applicationVersion: '0.4.0',
+                    children: [Center(child: Text('Developed by Omar Mohamud'))]
                     
                   );
                 }),
