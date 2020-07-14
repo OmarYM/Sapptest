@@ -174,149 +174,181 @@ class _GradePageState extends State<GradesPage> {
                               showDialog(
                                   context: context,
                                   builder: (context) {
-                                    return Dialog(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(15)),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(15.0),
-                                        child: Form(
-                                          key: _formKey,
-                                          child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Padding(
-                                                    padding: EdgeInsets.all(8)),
-                                                Text('Title:'),
-                                                TextFormField(
-                                                  key: _titleFormKey,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    hintText: 'Enter a Title',
+                                    return SingleChildScrollView(
+                                      child: Dialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(15)),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: Form(
+                                            key: _formKey,
+                                            child: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8)),
+                                                  Text('Title:'),
+                                                  TextFormField(
+                                                    key: _titleFormKey,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      hintText: 'Enter a Title',
+                                                    ),
+                                                    validator: (value) {
+                                                      if (value.isEmpty) {
+                                                        return 'Enter a Title';
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
                                                   ),
-                                                  validator: (value) {
-                                                    if (value.isEmpty) {
-                                                      return 'Enter a Title';
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                                Padding(
-                                                    padding: EdgeInsets.all(8)),
-                                                Text('Grade:'),
-                                                TextFormField(
-                                                  key: _gradeFormKey,
-                                                  keyboardType: TextInputType
-                                                      .numberWithOptions(
-                                                          decimal: true),
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    hintText:
-                                                        'Enter grade as a percentage',
+                                                  Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8)),
+                                                  Text('Grade:'),
+                                                  TextFormField(
+                                                    key: _gradeFormKey,
+                                                    keyboardType: TextInputType
+                                                        .numberWithOptions(
+                                                            decimal: true),
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      hintText:
+                                                          'Enter grade as a percentage',
+                                                    ),
+                                                    validator: (value) {
+                                                      if (value.isEmpty) {
+                                                        return 'Enter a grade';
+                                                      } else if (!isNumeric(
+                                                          value)) {
+                                                        return 'This isn\'t a Number!';
+                                                      } else if (double.parse(
+                                                                  value) >
+                                                              100 ||
+                                                          double.parse(value) <
+                                                              1) {
+                                                        return 'Number must be between 1 and 100';
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
                                                   ),
-                                                  validator: (value) {
-                                                    if (value.isEmpty) {
-                                                      return 'Enter a grade';
-                                                    } else if (!isNumeric(
-                                                        value)) {
-                                                      return 'This isn\'t a Number!';
-                                                    } else if (double.parse(
-                                                                value) >
-                                                            100 ||
-                                                        double.parse(value) <
-                                                            1) {
-                                                      return 'Number must be between 1 and 100';
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                                Padding(
-                                                    padding: EdgeInsets.all(8)),
-                                                Text('Weight:'),
-                                                TextFormField(
-                                                  key: _weightFormKey,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                    hintText:
-                                                        'Enter as a percentage',
+                                                  Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8)),
+                                                  Text('Weight:'),
+                                                  TextFormField(
+                                                    key: _weightFormKey,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      hintText:
+                                                          'Enter as a percentage',
+                                                    ),
+                                                    keyboardType: TextInputType
+                                                        .numberWithOptions(
+                                                            decimal: true),
+                                                    validator: (value) {
+                                                      if (value.isEmpty) {
+                                                        return 'Enter a Number';
+                                                      } else if (!isNumeric(
+                                                          value)) {
+                                                        return 'This isn\'t a Number!';
+                                                      } else if (double.parse(
+                                                                  value) >
+                                                              100 ||
+                                                          double.parse(value) <
+                                                              1) {
+                                                        return 'Number must be between 1 and 100';
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
                                                   ),
-                                                  keyboardType: TextInputType
-                                                      .numberWithOptions(
-                                                          decimal: true),
-                                                  validator: (value) {
-                                                    if (value.isEmpty) {
-                                                      return 'Enter a Number';
-                                                    } else if (!isNumeric(
-                                                        value)) {
-                                                      return 'This isn\'t a Number!';
-                                                    } else if (double.parse(
-                                                                value) >
-                                                            100 ||
-                                                        double.parse(value) <
-                                                            1) {
-                                                      return 'Number must be between 1 and 100';
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                                Padding(
-                                                    padding: EdgeInsets.all(8)),
-                                                RaisedButton(
-                                                  onPressed: () {
-                                                    if (_formKey.currentState
-                                                        .validate()) {
-                                                      var title = _titleFormKey
-                                                          .currentState.value;
-                                                      var grade = double.parse(
-                                                          _gradeFormKey
-                                                              .currentState
-                                                              .value);
-                                                      var weight = double.parse(
-                                                          _weightFormKey
-                                                              .currentState
-                                                              .value);
+                                                  Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8)),
+                                                  RaisedButton(
+                                                    onPressed: () {
+                                                      if (_formKey.currentState
+                                                          .validate()) {
+                                                        var title =
+                                                            _titleFormKey
+                                                                .currentState
+                                                                .value;
+                                                        var grade = double
+                                                            .parse(_gradeFormKey
+                                                                .currentState
+                                                                .value);
+                                                        var weight =
+                                                            double.parse(
+                                                                _weightFormKey
+                                                                    .currentState
+                                                                    .value);
 
-                                                      var id = Uuid().v1();
+                                                        var id = Uuid().v1();
 
-                                                      Grade newGrade = Grade(
-                                                          id,
-                                                          grade,
-                                                          weight,
-                                                          widget.course.id,
-                                                          title,
-                                                          DateTime.now()
-                                                              .millisecondsSinceEpoch);
+                                                        Grade newGrade = Grade(
+                                                            id,
+                                                            grade,
+                                                            weight,
+                                                            widget.course.id,
+                                                            title,
+                                                            DateTime.now()
+                                                                .millisecondsSinceEpoch);
 
-                                                      grades.add(newGrade);
+                                                        grades.add(newGrade);
 
-                                                      dbGrades.save(newGrade);
+                                                        dbGrades.save(newGrade);
 
-                                                      setState(() {
-                                                        courseGrades
-                                                            .add(newGrade);
+                                                        setState(() {
+                                                          courseGrades
+                                                              .add(newGrade);
 
-                                                        gradesTotal =
-                                                            getGrades();
-                                                      });
+                                                          gradesTotal =
+                                                              getGrades();
 
-                                                      Navigator.pop(context);
-                                                    }
-                                                  },
-                                                  child: Text('Ok'),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            10),
+                                                          series = [
+                                                            charts.Series(
+                                                                id: "grades",
+                                                                data:
+                                                                    gradesTotal,
+                                                                domainFn:
+                                                                    (double grade,
+                                                                            _) =>
+                                                                        _,
+                                                                measureFn:
+                                                                    (double grade,
+                                                                            _) =>
+                                                                        grade,
+                                                                colorFn: (double
+                                                                            grade,
+                                                                        _) =>
+                                                                    charts.ColorUtil
+                                                                        .fromDartColor(
+                                                                            Colors.blue))
+                                                          ];
+                                                        });
+
+                                                        Navigator.pop(context);
+                                                      }
+                                                    },
+                                                    child: Text('Ok'),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
                                                   ),
-                                                  color: Theme.of(context)
-                                                      .primaryColor,
-                                                ),
-                                                Padding(
-                                                    padding: EdgeInsets.all(8)),
-                                              ]),
+                                                  Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8)),
+                                                ]),
+                                          ),
                                         ),
                                       ),
                                     );
