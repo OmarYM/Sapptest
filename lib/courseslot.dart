@@ -67,12 +67,12 @@ class CourseSlot extends StatelessWidget {
                         children: [
                           Center(
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                            course.courseCode,
-                            textAlign: TextAlign.center,
-                          ),
-                              )),
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              course.courseCode,
+                              textAlign: TextAlign.center,
+                            ),
+                          )),
                         ],
                       )
                     : null),
@@ -173,27 +173,31 @@ class _CourseListState extends State<CourseList> {
                   thickness: 3,
                 ),
               ])
-            : courses.isEmpty
-                ? EmptyMessage()
-                : Hero(
-                    tag: "coursetile$index",
-                    child: Material(
-                      type: MaterialType.transparency,
-                      child: SingleChildScrollView(
-                        child: Column(children: [
-                          Material(
-                            child: CourseSlot(
-                              function: widget.function,
-                              course: courses[index - 1],
-                              index: index,
-                            ),
+            : index < courses.length + 2
+                ? AnimatedContainer(
+                    duration: Duration(milliseconds: 500),
+                    padding: EdgeInsets.only(bottom: adspace ? 60 : 0))
+                : courses.isEmpty
+                    ? EmptyMessage()
+                    : Hero(
+                        tag: "coursetile$index",
+                        child: Material(
+                          type: MaterialType.transparency,
+                          child: SingleChildScrollView(
+                            child: Column(children: [
+                              Material(
+                                child: CourseSlot(
+                                  function: widget.function,
+                                  course: courses[index - 1],
+                                  index: index,
+                                ),
+                              ),
+                            ]),
                           ),
-                        ]),
-                      ),
-                    ),
-                  );
+                        ),
+                      );
       },
-      itemCount: courses.isEmpty ? 2 : courses.length + 1,
+      itemCount: courses.isEmpty ? 3 : courses.length + 2,
     );
   }
 }

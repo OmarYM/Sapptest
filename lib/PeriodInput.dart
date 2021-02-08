@@ -637,6 +637,9 @@ class _PeriodInputsState extends State<PeriodInputs> {
             ),
           ),
         ),
+        AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                padding: EdgeInsets.only(bottom: adspace ? 60 : 0))
       ],
     );
   }

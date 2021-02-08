@@ -553,9 +553,11 @@ class _CoursePeriodListState extends State<CoursePeriodList> {
         physics: BouncingScrollPhysics(),
         key: new Key('huh'),
         itemBuilder: (context, index) {
-          return coursePeriods.isEmpty
+          return  coursePeriods.isEmpty
               ? EmptyMessage()
-              : PeriodSlot(
+              : index > coursePeriods.length ? AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                padding: EdgeInsets.only(bottom: adspace ? 60 : 0))  : PeriodSlot(
                   index: index,
                   title: coursePeriods[index].title,
                   subtitle: getDayOfTheWeek(coursePeriods[index].day),
@@ -564,7 +566,7 @@ class _CoursePeriodListState extends State<CoursePeriodList> {
                   refresh: callback,
                 );
         },
-        itemCount: coursePeriods.isEmpty ? 1 : coursePeriods.length,
+        itemCount: coursePeriods.isEmpty ? 2 : coursePeriods.length + 1,
       ),
     );
   }

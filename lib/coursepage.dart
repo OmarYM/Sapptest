@@ -230,6 +230,9 @@ class _CoursePageState extends State<CoursePage> {
                 ),
               ),
             ),
+            AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                padding: EdgeInsets.only(bottom: adspace ? 60 : 0))
             
           ],
         )

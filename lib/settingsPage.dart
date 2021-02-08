@@ -150,6 +150,9 @@ class _SettingsPageState extends State<SettingsPage> {
                 }),
           ),
         ),
+        AnimatedContainer(
+                duration: Duration(milliseconds: 500),
+                padding: EdgeInsets.only(bottom: adspace ? 60 : 0))
       ]),
     );
   }

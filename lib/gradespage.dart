@@ -412,8 +412,8 @@ class _GradePageState extends State<GradesPage> {
                                 refresh: refresh);
           },
           itemCount: courseGrades.isEmpty
-              ? courseGrades.length + 4
-              : courseGrades.length + 3,
+              ? courseGrades.length + 5
+              : courseGrades.length + 4,
         ));
   }
 }

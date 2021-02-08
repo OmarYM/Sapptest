@@ -16,6 +16,8 @@ List<Period> periods;
 List<Course> courses;
 List<Grade> grades;
 
+bool adspace;
+
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 NotificationAppLaunchDetails notificationAppLaunchDetails;
 

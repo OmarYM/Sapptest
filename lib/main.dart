@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 
 import 'sharedPrefs.dart';
@@ -9,10 +11,13 @@ import 'dbhelper.dart';
 import 'mainPage.dart';
 import 'pagetransitions.dart';
 import 'userdata.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  FirebaseAdMob.instance.initialize(appId: BannerAd.testAdUnitId);
+  
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   notificationAppLaunchDetails =

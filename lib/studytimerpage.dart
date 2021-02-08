@@ -327,6 +327,7 @@ class _StudyTimerPageState extends State<StudyTimerPage>
                     Flexible(child: Container(), flex: 1),
                   ],
                 ),
+                Padding(padding: EdgeInsets.only(top: 30),)
               ],
             ),
           );
