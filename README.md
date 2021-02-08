@@ -4,7 +4,7 @@ A flutter app for scheduling your class times every week. It also has other tool
 
 You can find more info and the actual apps at:
 
-Android: <http://www.play.google.com/store/apps/details?id=com.Fidapps.ScheduleTime&hl=en>
+Android: <http://play.google.com/store/apps/details?id=com.Fidapps.ScheduleTime&hl=en>
 
 IOS: <http://apps.apple.com/ca/app/schedule-time/id1523404626>
 
