@@ -6,5 +6,5 @@ You can find more info and the actual apps at:
 
 Android: <http://www.play.google.com/store/apps/details?id=com.Fidapps.ScheduleTime&hl=en>
 
-IOS: <http://www.apps.apple.com/ca/app/schedule-time/id1523404626>
+IOS: <http://apps.apple.com/ca/app/schedule-time/id1523404626>
 
